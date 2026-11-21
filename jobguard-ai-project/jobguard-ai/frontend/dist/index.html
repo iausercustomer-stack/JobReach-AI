@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobGuard AI — Before You Trust the Offer, Verify the Evidence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script>
+    if (typeof window.tailwind !== "undefined") {
+      window.tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              ivory: "#FAF9F6",
+              sand: "#F2EFE9",
+              obsidian: "#14131B",
+              indigoBrand: { DEFAULT: "#4F46E5", deep: "#3730A3", soft: "#EEF2FF" },
+              emeraldSafe: "#059669",
+              amberWarn: "#D97706",
+              roseDanger: "#E11D48",
+            },
+            fontFamily: {
+              display: ['"Space Grotesk"', '"Noto Sans Devanagari"', "sans-serif"],
+              sans: ['"DM Sans"', '"Noto Sans Devanagari"', "sans-serif"],
+              mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
+            },
+          },
+        },
+      };
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js" defer></script>
+  <style>
+    :root {
+      --canvas: #FAF9F6;
+      --surface: #FFFFFF;
+      --surface-muted: #F3F1EB;
+      --ink: #14131B;
+      --ink-muted: #5C5B6B;
+      --line: #E6E3DB;
+      --accent: #4F46E5;
+      --accent-soft: #EEF2FF;
+    }
+    .dark {
+      --canvas: #0D0E14;
+      --surface: #161822;
+      --surface-muted: #1E2130;
+      --ink: #F8FAFC;
+      --ink-muted: #9CA3B8;
+      --line: #2A2E42;
+      --accent: #818CF8;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+    }
+    body {
+      font-family: "DM Sans", "Noto Sans Devanagari", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--canvas);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1, h2, h3, .font-display {
+      font-family: "Space Grotesk", "Noto Sans Devanagari", sans-serif;
+      letter-spacing: -0.025em;
+    }
+    .glass-nav {
+      background: rgba(250, 249, 246, 0.86);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+    .dark .glass-nav {
+      background: rgba(13, 14, 20, 0.86);
+    }
+    .card-ui {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 1.25rem;
+      box-shadow: 0 1px 2px rgba(20, 19, 27, 0.03), 0 8px 24px -10px rgba(20, 19, 27, 0.06);
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+    }
+    .dark .card-ui {
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+    }
+    .card-hover:hover {
+      border-color: rgba(79, 70, 229, 0.45);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -10px rgba(79, 70, 229, 0.16);
+    }
+    .btn-indigo {
+      background: linear-gradient(135deg, #4F46E5 0%, #4338CA 100%);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.28);
+      transition: all 0.16s ease;
+    }
+    .btn-indigo:hover {
+      background: linear-gradient(135deg, #5B53EE 0%, #4F46E5 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+    }
+    .hero-aurora {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(79, 70, 229, 0.13) 0%, transparent 45%),
+        radial-gradient(circle at 88% 22%, rgba(5, 150, 105, 0.10) 0%, transparent 42%),
+        radial-gradient(circle at 50% 95%, rgba(217, 119, 6, 0.08) 0%, transparent 45%);
+    }
+    .dark .hero-aurora {
+      background:
+        radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.22) 0%, transparent 48%),
+        radial-gradient(circle at 88% 22%, rgba(16, 185, 129, 0.14) 0%, transparent 45%);
+    }
+    .inert-url {
+      font-family: "JetBrains Mono", monospace;
+      word-break: break-all;
+      user-select: all;
+    }
+    .reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      transform: none !important;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col transition-colors duration-200">
+  <!-- Floating Glass Top Navigation (Completely New Layout: No Heavy Sidebar!) -->
+  <header class="glass-nav sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
+      <button type="button" onclick="nav('/')" class="flex items-center gap-2.5 text-left shrink-0 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center font-display font-bold text-base shadow-sm group-hover:scale-105 transition">
+          JG
+        </div>
+        <div class="leading-tight">
+          <div class="font-display font-bold text-base tracking-tight flex items-center gap-1.5">
+            <span>JobGuard AI</span>
+            <span id="api-badge" class="hidden sm:inline-block px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 dark:bg-indigo-950/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200/70 dark:border-indigo-800">Local</span>
+          </div>
+          <div class="text-[11px] text-[var(--ink-muted)] hidden sm:block">Verify the Evidence</div>
+        </div>
+      </button>
+
+      <!-- Centered Pill Navigation -->
+      <nav id="desktop-nav" class="hidden md:flex items-center gap-1 p-1 rounded-full bg-[var(--surface-muted)] border border-[var(--line)]"></nav>
+
+      <!-- Right Utility Controls -->
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="toggleLang()" class="px-2.5 py-1.5 rounded-full text-xs font-semibold bg-[var(--surface)] border border-[var(--line)] hover:border-indigo-400 transition" title="Switch English / Hindi">
+          <span id="lang-pill">हिंदी</span>
+        </button>
+        <button type="button" onclick="toggleTheme()" class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--surface)] border border-[var(--line)] hover:border-indigo-400 transition text-sm" title="Switch Dark / Light Theme">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button type="button" onclick="nav('/settings')" class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--surface)] border border-[var(--line)] hover:border-indigo-400 transition text-sm" title="Settings & Privacy">
+          ⚙️
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Page Root -->
+  <main id="app-root" class="flex-1 w-full pb-24 md:pb-12"></main>
+
+  <!-- Mobile Bottom Dock (Thumb-Friendly) -->
+  <nav id="mobile-dock" class="md:hidden fixed bottom-3 inset-x-3 z-40 rounded-2xl bg-[var(--surface)]/95 backdrop-blur-md border border-[var(--line)] shadow-xl px-2 py-1.5 grid grid-cols-5 gap-1"></nav>
+
+  <!-- Toast Stack -->
+  <div id="toast-box" class="fixed bottom-20 md:bottom-6 right-5 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <script>
+    // =========================================================================
+    // 1. MULTILINGUAL STRINGS (EN / HI), DEMOS, ACADEMY & QUIZ
+    // =========================================================================
+    const I18N = {
+      en: {
+        tagline: "Before You Trust the Offer, Verify the Evidence.",
+        heroTitle: "Check any job offer, recruiter, or career link in seconds.",
+        heroSub: "Built for students, freshers, WFH applicants, and freelancers. Get a clear 7-category evidence report in English, Hindi, or Hinglish—without ever opening suspicious links.",
+        navVerify: "Verify",
+        navDashboard: "Dashboard",
+        navHistory: "History",
+        navLearn: "Learn",
+        navHelp: "1930 Help",
+        ctaVerify: "Verify a Job Now",
+        ctaDemo: "Try a Live Demo",
+      },
+      hi: {
+        tagline: "ऑफ़र पर भरोसा करने से पहले, सबूत की जांच करें।",
+        heroTitle: "किसी भी नौकरी ऑफ़र, रिक्रूटर या लिंक की कुछ सेकंड में जांच करें।",
+        heroSub: "छात्रों, फ्रेशर्स, वर्क-फ्रॉम-होम और फ्रीलांसर्स के लिए। संदिग्ध लिंक खोले बिना अंग्रेजी, हिंदी या हिंग्लिश में 7-श्रेणी साक्ष्य रिपोर्ट पाएं।",
+        navVerify: "सत्यापन",
+        navDashboard: "डैशबोर्ड",
+        navHistory: "इतिहास",
+        navLearn: "सीखें",
+        navHelp: "1930 सहायता",
+        ctaVerify: "अभी नौकरी जांचें",
+        ctaDemo: "डेमो देखें",
+      },
+    };
+
+    const DEMO_SCENARIOS = [
+      { id: "demo-1", short: "Registration Fee", label: "Fake Company Asking for Registration Fee (EN)", cat: "Advance Fee", lang: "en", text: "Company: Apex Global Solutions Pvt Ltd\nRole: Junior Operations Executive\nSalary: ₹42,000 per month\nLocation: Noida\nCongratulations! You are selected without interview. Pay ₹999 registration fee to confirm your job before 6:00 PM today. Contact hr.apexglobal99@gmail.com or WhatsApp +91 98112 34567." },
+      { id: "demo-2", short: "Hinglish WFH", label: "Unrealistic WFH Earnings (Hinglish)", cat: "WFH Scam", lang: "hinglish", text: "Part-time Work From Home! Ghar baithe roz ₹5,000 kamayein — 10th pass, no experience required, only smartphone needed. Job ke liye pehle ₹1500 registration fees jama karo aur turant joining pao. WhatsApp +91 90123 45678." },
+      { id: "demo-3", short: "Telegram Tasks", label: "Telegram Prepaid Task Scam (EN)", cat: "Task Scam", lang: "en", text: "VIP Telegram Task Group! Earn ₹5,000 to ₹10,000 daily by liking YouTube videos and rating Google Maps hotels. Complete 3 prepaid merchant tasks and recharge wallet to unlock your frozen salary payout. Join https://t.me/vip_daily_tasks_hr" },
+      { id: "demo-4", short: "Hindi Internship", label: "Fake Internship with Security Deposit (Hindi)", cat: "Internship Scam", lang: "hi", text: "कंपनी: BrightFuture Tech Solutions\nपद: Web Development Intern\nस्टाइपेंड: ₹25,000 per month\nबिना इंटरव्यू के नौकरी पाने के लिए ₹2,000 सिक्योरिटी डिपॉजिट दें और लैपटॉप किट प्राप्त करें। संपर्क: +91 88001 22334" },
+      { id: "demo-5", short: "Gmail + Fake Site", label: "Fake Recruiter Using Gmail & Suspicious Site", cat: "Impersonation", lang: "en", text: "Company: Tata Consultancy Services (TCS)\nRole: Associate Software Engineer\nSalary: 7.5 LPA\nLocation: Hyderabad\nComplete verification at https://tcs-hr-onboarding-verify.top/apply within 2 hours. Reply to tcs.hiring.desk2026@gmail.com.", jobUrl: "https://tcs-hr-onboarding-verify.top/apply" },
+      { id: "demo-6", short: "Offer Mismatch", label: "Offer Letter with Contradictory Company Info", cat: "Conflict", lang: "en", text: "Company: Infosys Limited\nRole: Systems Engineer\nSalary: 4.5 LPA\nLocation: Bengaluru\nRecruiter Email: hr@infosys-careers-desk.xyz\nRequisition ID: INF-2026-881", secondaryText: "Company: GlobalTech Staffing Services\nRole: Data Entry Operator\nSalary: ₹18,000 per month\nLocation: Gurugram\nEmail: hiring@globaltechstaff.online" },
+      { id: "demo-7", short: "Fake Infosys URL", label: "Suspicious Link Impersonating Known Company", cat: "Phishing URL", lang: "en", text: "Company: Infosys\nRole: Graduate Engineer Trainee\nApply immediately on our official portal: https://infosys.careers-verification.xyz/apply?redirect=http://verify-hr.top\nOffer will be cancelled within 3 hours if verification is incomplete.", jobUrl: "https://infosys.careers-verification.xyz/apply?redirect=http://verify-hr.top" },
+      { id: "demo-8", short: "Genuine Razorpay", label: "Genuine Job Ad (No Upfront Fee)", cat: "Legitimate", lang: "en", text: "Company: Razorpay\nRole: Backend Software Engineer\nSalary: 16-22 LPA\nLocation: Bengaluru\nRequisition ID: RZP-ENG-4092\nApply via https://razorpay.com/jobs/ or contact recruiting@razorpay.com. Selection involves a technical round and two engineering interviews.", jobUrl: "https://razorpay.com/jobs/" },
+      { id: "demo-9", short: "Anti-Fraud Notice", label: "Genuine Email with Anti-Fraud Disclaimer", cat: "Legitimate", lang: "en", text: "Company: Infosys Limited\nRole: Specialist Programmer\nSalary: 9.5 LPA\nLocation: Pune\nUrgent reminder: confirm your interview slot for Thursday at 11:00 AM via careers@infosys.com or https://www.infosys.com/careers/.\nImportant Notice: Infosys does not charge any fee at any stage. Never pay any registration fee during recruitment.", jobUrl: "https://www.infosys.com/careers/" },
+      { id: "demo-10", short: "Incomplete Ad", label: "Incomplete Job Ad Requiring Verification", cat: "Unverified", lang: "en", text: "Hiring immediately for office assistant and back-office support roles. Good salary package. Freshers welcome. Call +91 98765 11223 for interview timing." },
+    ];
+
+    const ACADEMY_MODULES = [
+      { n: 1, title: "Fake Job Advertisements", cat: "Job Ads", summary: "Vague duties, inflated salaries, and private WhatsApp/Telegram hiring funnels.", redFlags: ["No official corporate website or domain", "Guaranteed selection without screening"], safe: "Search the company's official career portal manually." },
+      { n: 2, title: "Advance Registration Fee Scams", cat: "Payments", summary: "Why 'refundable' registration, interview, or verification fees are always fraud.", redFlags: ["₹500–₹3,000 upfront fee demand", "Promise of refund in your first paycheck"], safe: "Never pay any fee to apply, interview, or confirm a job." },
+      { n: 3, title: "Fake Internships & Deposits", cat: "Students", summary: "Laptop deposits and paid certificates disguised as guaranteed internships.", redFlags: ["Security deposit for laptop or ID kit", "Mandatory paid training before joining"], safe: "Verify internship partners with your college placement cell." },
+      { n: 4, title: "Work-From-Home Traps", cat: "Remote Work", summary: "Unrealistic ₹5,000/day typing offers and fake legal-notice penalty threats.", redFlags: ["₹3,000–₹10,000/day for simple typing", "Fake accuracy-penalty legal emails"], safe: "Ignore fake legal threats from unverified typing portals." },
+      { n: 5, title: "Telegram Prepaid Task Scams", cat: "Task Fraud", summary: "Small ₹200 bait payouts followed by escalating VIP wallet recharges.", redFlags: ["Paid to like YouTube videos or rate hotels", "Must recharge wallet to unlock earnings"], safe: "Leave the group immediately and never recharge any wallet." },
+      { n: 6, title: "Fraudulent Offer Letters", cat: "Documents", summary: "Copied corporate logos, mismatched company names, and Gmail HR contacts.", redFlags: ["Contradictory employer or salary details", "Offer issued without any interview"], safe: "Compare every offer field against the original job posting." },
+      { n: 7, title: "Recruiter & HR Impersonation", cat: "Identity", summary: "Spotting lookalike domains like @company-careers.xyz and Gmail spoofing.", redFlags: ["Lookalike domain adding '-hr' or '-verify'", "Refusal to email from official corporate domain"], safe: "Check the exact domain after '@' against the official site." },
+      { n: 8, title: "Phishing Recruitment Sites", cat: "URL Security", summary: "Reading registrable domains right-to-left (infosys.careers-verification.xyz).", redFlags: ["Brand in subdomain instead of registrable domain", "Disposable TLDs (.xyz, .top, .icu)"], safe: "Inspect links structurally without clicking them." },
+      { n: 9, title: "Personal & Banking Data Theft", cat: "Privacy", summary: "Protecting Aadhaar, PAN, OTPs, UPI PINs, and bank passwords during hiring.", redFlags: ["Requests for OTP, UPI PIN, ATM PIN, or CVV", "Early demands for bank credentials"], safe: "HR never needs your OTP, UPI PIN, or netbanking password." },
+      { n: 10, title: "Remote-Access Scams (AnyDesk)", cat: "Device Safety", summary: "Why recruiters should never ask for remote desktop control of your device.", redFlags: ["Instructions to install AnyDesk/TeamViewer", "Requests for 9-digit remote workspace code"], safe: "Uninstall remote-access apps immediately and call 1930 if compromised." },
+    ];
+
+    const QUIZ_QUESTIONS = [
+      { sender: "WhatsApp HR (+91 98112 44019)", msg: "Selected for WFH Data Entry (₹45,000/mo) without interview. Pay ₹999 refundable registration fee today.", ans: "scam", exp: "Fraudulent: Guaranteed selection without interview plus an upfront 'refundable' registration fee." },
+      { sender: "careers@infosys.com", msg: "Urgent reminder: technical interview tomorrow at 11 AM. Note: Infosys never charges any registration fee during recruitment.", ans: "legitimate", exp: "Legitimate: Official domain, real interview scheduling, and protective anti-fraud disclaimer." },
+      { sender: "SMS Job Alert", msg: "Apply for TCS Campus Hiring at https://tcs.careers-verification.xyz/apply within 2 hours.", ans: "scam", exp: "Fraudulent: Lookalike URL — actual domain is 'careers-verification.xyz', not 'tcs.com'." },
+      { sender: "Hindi Internship Forward", msg: "बिना इंटरव्यू के नौकरी पाने के लिए ₹2,000 सिक्योरिटी डिपॉजिट दें।", ans: "scam", exp: "Fraudulent: Hindi security-deposit demand promising selection without interview." },
+      { sender: "recruiting@razorpay.com", msg: "Thank you for applying for Backend Engineer (Req ID: RZP-4092). Technical round details at https://razorpay.com/jobs/.", ans: "legitimate", exp: "Legitimate: Official email/domain alignment, requisition ID, and zero payment demands." },
+    ];
+
+    // =========================================================================
+    // 2. STATE & STORAGE
+    // =========================================================================
+    const STORE = { SETTINGS: "jobguard_settings_v2", HISTORY: "jobguard_history_v1", QUIZ: "jobguard_quiz_best_v1" };
+    const STATE = {
+      route: "/",
+      backendAvailable: false,
+      settings: { lang: "en", theme: "light", reducedMotion: false, saveHistory: true, redactSensitive: true },
+      history: [],
+      // Unified Verification Studio state
+      inputMode: "paste", // 'paste' | 'url' | 'ocr' | 'doc'
+      step: 1, // 1 = Submit, 2 = Review 10 Fields, 3 = 7-Category Report
+      inputText: "",
+      secondaryText: "",
+      showCompareBox: false,
+      inputUrl: "",
+      isDemoInput: false,
+      extractedDraft: null,
+      fieldEdits: {},
+      currentReport: null,
+      isLoading: false,
+      // Quick URL Inspector inside URL mode
+      urlResult: null,
+      // OCR & Doc state
+      ocrImageUrl: null,
+      ocrFileName: "",
+      ocrProgress: 0,
+      ocrStatus: "",
+      docWarnings: [],
+      // Learn hub tab
+      learnTab: "academy", // 'academy' | 'quiz'
+      // History filter
+      histSearch: "",
+      histRisk: "ALL",
+      // Quiz
+      quizIdx: 0, quizChoice: null, quizSubmitted: false, quizScore: 0, quizDone: false, quizBest: 0,
+      expandedCats: {},
+    };
+
+    function loadState() {
+      try {
+        STATE.settings = { ...STATE.settings, ...JSON.parse(localStorage.getItem(STORE.SETTINGS) || "{}") };
+        STATE.history = JSON.parse(localStorage.getItem(STORE.HISTORY) || "[]");
+        STATE.quizBest = Number(localStorage.getItem(STORE.QUIZ) || "0");
+      } catch {}
+      applyTheme();
+    }
+    function saveSettings() { try { localStorage.setItem(STORE.SETTINGS, JSON.stringify(STATE.settings)); } catch {} }
+    function saveHistory() { try { localStorage.setItem(STORE.HISTORY, JSON.stringify(STATE.history.slice(0, 100))); } catch {} }
+    function applyTheme() {
+      document.documentElement.classList.toggle("dark", STATE.settings.theme === "dark");
+      document.documentElement.classList.toggle("reduced-motion", STATE.settings.reducedMotion);
+      const ti = document.getElementById("theme-icon");
+      if (ti) ti.textContent = STATE.settings.theme === "dark" ? "☀️" : "🌙";
+      const lp = document.getElementById("lang-pill");
+      if (lp) lp.textContent = STATE.settings.lang === "hi" ? "EN" : "हिंदी";
+    }
+    function t(k) { return (I18N[STATE.settings.lang] && I18N[STATE.settings.lang][k]) || I18N.en[k] || k; }
+    function esc(s) { return s == null ? "" : String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+    function toast(msg, kind) {
+      const box = document.getElementById("toast-box");
+      if (!box) return;
+      const d = document.createElement("div");
+      const bg = kind === "error" ? "bg-rose-600" : kind === "warn" ? "bg-amber-600" : "bg-indigo-600";
+      d.className = `pointer-events-auto px-4 py-3 rounded-2xl text-white text-xs font-semibold shadow-xl ${bg}`;
+      d.textContent = msg;
+      box.appendChild(d);
+      setTimeout(() => d.remove(), 3000);
+    }
+
+    async function detectBackend() {
+      const b = document.getElementById("api-badge");
+      try {
+        const r = await fetch("/api/health");
+        if (r.ok) {
+          STATE.backendAvailable = true;
+          if (b) { b.textContent = "API Live"; b.className = "hidden sm:inline-block px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"; }
+          return;
+        }
+      } catch {}
+      STATE.backendAvailable = false;
+    }
+
+    // =========================================================================
+    // 3. LOCAL ENGINE (Mirrors Backend 100% Offline)
+    // =========================================================================
+    const PROTECTED_EMPLOYERS = {
+      infosys: { canonical: "Infosys Limited", domains: ["infosys.com"], portal: "https://www.infosys.com/careers/" },
+      tcs: { canonical: "Tata Consultancy Services (TCS)", domains: ["tcs.com"], portal: "https://www.tcs.com/careers" },
+      wipro: { canonical: "Wipro Limited", domains: ["wipro.com"], portal: "https://careers.wipro.com" },
+      accenture: { canonical: "Accenture", domains: ["accenture.com"], portal: "https://www.accenture.com/in-en/careers" },
+      razorpay: { canonical: "Razorpay", domains: ["razorpay.com"], portal: "https://razorpay.com/jobs/" },
+      google: { canonical: "Google LLC", domains: ["google.com"], portal: "https://www.google.com/about/careers/" },
+      microsoft: { canonical: "Microsoft Corporation", domains: ["microsoft.com"], portal: "https://careers.microsoft.com" },
+      amazon: { canonical: "Amazon", domains: ["amazon.com", "amazon.jobs", "amazon.in"], portal: "https://www.amazon.jobs" },
+    };
+    const SUSPICIOUS_TLDS = new Set(["xyz", "top", "click", "loan", "work", "gq", "tk", "ml", "cf", "ga", "buzz", "icu", "vip", "online", "site"]);
+    const SHORTENERS = new Set(["bit.ly", "tinyurl.com", "t.co", "goo.gl", "is.gd", "rb.gy", "cutt.ly", "wa.me"]);
+    const PERSONAL_DOMAINS = new Set(["gmail.com", "yahoo.com", "yahoo.co.in", "outlook.com", "hotmail.com", "rediffmail.com"]);
+
+    function localRedact(text) {
+      if (!text) return { redacted: "", counts: {} };
+      let out = text;
+      const counts = {};
+      const pats = [
+        ["aadhaar", /(?<!\d)(?:[2-9]\d{3}[\s-]\d{4}[\s-]\d{4}|[2-9]\d{11})(?!\d)/g, "[REDACTED_AADHAAR]"],
+        ["pan", /\b[A-Z]{5}\d{4}[A-Z]\b/g, "[REDACTED_PAN]"],
+        ["ifsc", /\b[A-Z]{4}0[A-Z0-9]{6}\b/g, "[REDACTED_IFSC]"],
+        ["otp_pin", /((?:otp|upi\s*pin|atm\s*pin|cvv|password)\s*(?:is|:|=)?\s*)\S{3,16}/gi, "$1[REDACTED_SECRET]"],
+      ];
+      for (const [k, rx, rep] of pats) {
+        let c = 0;
+        out = out.replace(rx, (...a) => { c++; return rep.includes("$1") ? rep.replace("$1", a[1] || "") : rep; });
+        if (c) counts[k] = c;
+      }
+      return { redacted: out, counts };
+    }
+
+    function localInspectUrl(rawUrl) {
+      const sub = (rawUrl || "").trim();
+      const ws = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(sub) ? sub : "http://" + sub;
+      let p;
+      try { p = new URL(ws); } catch {
+        return { submitted_url: sub, hostname: "", registrable_domain: "", scheme: "invalid", is_https: false, risk_level: "HIGH RISK", risk_index: 80, summary: "Malformed URL.", signals: [{ signal: "malformed_url", severity: "high", explanation: "Cannot parse as valid web URL." }], recommended_actions: ["Do not open malformed links."] };
+      }
+      const host = (p.hostname || "").toLowerCase();
+      const parts = host.split(".");
+      const reg = parts.length >= 2 ? parts.slice(-2).join(".") : host;
+      const tld = reg.split(".").pop() || "";
+      const signals = [];
+      let pts = 0;
+      if (p.protocol !== "https:") { pts += 14; signals.push({ signal: "unencrypted_http", severity: "medium", explanation: "Uses unencrypted HTTP." }); }
+      if (/^(\d{1,3}\.){3}\d{1,3}$/.test(host)) { pts += 45; signals.push({ signal: "raw_ip_address", severity: "high", explanation: "Uses raw IP address." }); }
+      if (host.includes("xn--")) { pts += 38; signals.push({ signal: "punycode_idn", severity: "high", explanation: "Contains Punycode (xn--) homograph characters." }); }
+      if (SUSPICIOUS_TLDS.has(tld)) { pts += 26; signals.push({ signal: "suspicious_tld", severity: "medium", explanation: `Uses high-abuse TLD '.${tld}'.` }); }
+      if (SHORTENERS.has(reg)) { pts += 24; signals.push({ signal: "url_shortener", severity: "medium", explanation: `Uses URL shortener '${reg}'.` }); }
+      let imp = null, official = [];
+      const full = (host + p.pathname).toLowerCase();
+      const toks = new Set(full.split(/[^a-z0-9]+/));
+      for (const [k, info] of Object.entries(PROTECTED_EMPLOYERS)) {
+        if ((k.length <= 3 ? toks.has(k) : full.includes(k)) && !info.domains.includes(reg)) {
+          imp = k.toUpperCase(); official = info.domains; pts += 52;
+          signals.push({ signal: "employer_brand_impersonation", severity: "critical", explanation: `References ${imp}, but actual registrable domain is '${reg}' instead of ${official.join(", ")}.` });
+          break;
+        }
+      }
+      if (p.search && /(redirect|url=|next=|token=)/i.test(p.search)) { pts += 18; signals.push({ signal: "redirect_params", severity: "medium", explanation: "Contains redirect/session query parameters." }); }
+      const idx = Math.min(98, Math.max(5, pts));
+      const lvl = idx >= 60 || imp ? "HIGH RISK" : idx >= 25 ? "MEDIUM RISK" : "LOW RISK";
+      return {
+        submitted_url: sub, normalized_url: p.href, hostname: host, registrable_domain: reg,
+        scheme: p.protocol.replace(":", ""), is_https: p.protocol === "https:",
+        impersonated_brand: imp, official_domains: official, risk_level: lvl, risk_index: idx,
+        summary: lvl === "HIGH RISK" ? `High-risk structural signals on '${reg}'. Do not open.` : lvl === "MEDIUM RISK" ? `Structural warning signs on '${reg}'. Verify independently.` : `No strong structural phishing signals on '${reg}'.`,
+        signals, recommended_actions: lvl === "HIGH RISK" ? [`Do not open '${reg}'.`, "Navigate manually to the official company website."] : ["Confirm the domain matches the official employer website."],
+      };
+    }
+
+    function localExtract(text, jobUrl) {
+      const s = jobUrl && !text.includes(jobUrl) ? `${text}\nJob URL: ${jobUrl}` : text;
+      const miss = (f) => ({ field_name: f, value: null, status: "missing", confidence: 0, supporting_snippet: null });
+      const ok = (f, v, c, sn) => ({ field_name: f, value: v.trim(), status: "extracted", confidence: c, supporting_snippet: sn });
+      const emp = s.match(/(?:company|employer|कंपनी)\s*[:\-]\s*([^\n,;.|]+)/i) || s.match(/\b(Infosys|TCS|Tata Consultancy Services|Wipro|Accenture|Razorpay|Google|Microsoft|Amazon)\b/i);
+      const role = s.match(/(?:job\s+title|role|position|पद)\s*[:\-]\s*([^\n;.|]+)/i) || s.match(/\b(Software\s+Engineer|Backend\s+Software\s+Engineer|Systems\s+Engineer|Specialist\s+Programmer|Web\s+Development\s+Intern|Graduate\s+Engineer\s+Trainee)\b/i);
+      const sal = s.match(/(?:salary|ctc|stipend|स्टाइपेंड|earn)\s*[:\-]?\s*((?:₹|Rs\.?|INR|\$)\s*\d[\d,]*(?:\s*(?:-|to|–)\s*(?:₹|Rs\.?|INR|\$)?\s*\d[\d,]*)?\s*(?:LPA|per\s+month|\/month|per\s+day|daily|\/day)?|\d+(?:\.\d+)?(?:\s*(?:-|to)\s*\d+(?:\.\d+)?)?\s*LPA)/i);
+      const email = s.match(/\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/);
+      const phone = s.match(/(?:\+91[\s-]?)?[6-9]\d{4}[\s-]?\d{5}\b/);
+      const loc = s.match(/(?:location|city)\s*[:\-]\s*([^\n;.|]+)/i) || s.match(/\b(Bengaluru|Hyderabad|Pune|Mumbai|Noida|Gurugram|Delhi|Chennai|Lucknow|Remote)\b/i);
+      const req = s.match(/(?:requisition\s*id|req\s*id|job\s*id)\s*[:\-#]?\s*([A-Z0-9\-_]{3,24})/i);
+      const urlM = jobUrl ? [jobUrl] : s.match(/https?:\/\/[^\s<>"]+/i);
+      const dead = s.match(/(?:before|within|deadline)\s*[:\-]?\s*(\d+\s*(?:hours?|hrs?|days?)|[0-9:]+\s*(?:am|pm)\s*today)/i);
+      let pay = miss("payment_requests");
+      const pm = s.match(/((?:pay|deposit|jama\s+karo|दें)[^.\n]{0,60}?(?:registration\s+fee|security\s+deposit|prepaid\s+task|recharge|₹\s*\d[\d,]*)|सिक्योरिटी\s+डिपॉजिट|रजिस्ट्रेशन\s+फीस)/i);
+      if (pm) {
+        const pref = s.slice(Math.max(0, pm.index - 45), pm.index).toLowerCase();
+        if (!/(never|do\s+not|does\s+not|no\s+|zero|कभी\s+नहीं)/.test(pref)) pay = ok("payment_requests", pm[0], 0.92, pm[0]);
+      }
+      const dev = (s.match(/[\u0900-\u097F]/g) || []).length;
+      const lang = dev >= 5 ? "hi" : /\b(jama|karo|pehle|ghar\s+baithe|roz|kamayein)\b/i.test(s) ? "hinglish" : "en";
+      return {
+        employer: emp ? ok("employer", emp[1] || emp[0], 0.88, emp[0]) : miss("employer"),
+        role: role ? ok("role", role[1] || role[0], 0.86, role[0]) : miss("role"),
+        salary: sal ? ok("salary", sal[1] || sal[0], 0.85, sal[0]) : miss("salary"),
+        recruiter_email: email ? ok("recruiter_email", email[0], 0.95, email[0]) : miss("recruiter_email"),
+        phone: phone ? ok("phone", phone[0], 0.9, phone[0]) : miss("phone"),
+        location: loc ? ok("location", loc[1] || loc[0], 0.82, loc[0]) : miss("location"),
+        job_url: urlM ? ok("job_url", urlM[0], 0.96, urlM[0]) : miss("job_url"),
+        requisition_id: req ? ok("requisition_id", req[1], 0.9, req[0]) : miss("requisition_id"),
+        payment_requests: pay,
+        deadlines: dead ? ok("deadlines", dead[1] || dead[0], 0.8, dead[0]) : miss("deadlines"),
+        detected_language: lang,
+      };
+    }
+
+    function localVerify(text, secondaryText, jobUrl, edits, isDemo) {
+      const ts = new Date().toISOString();
+      const ext = localExtract(text, jobUrl);
+      for (const [k, v] of Object.entries(edits || {})) {
+        if (ext[k]) ext[k] = v && v.trim() ? { field_name: k, value: v.trim(), status: "extracted", confidence: 1, supporting_snippet: "User reviewed" } : { field_name: k, value: null, status: "missing", confidence: 0, supporting_snippet: null };
+      }
+      const { redacted, counts } = STATE.settings.redactSensitive ? localRedact(text) : { redacted: text, counts: {} };
+      const hasDisc = /(never\s+pay\s+(?:any\s+)?(?:registration\s+fee|security\s+deposit)|does\s+not\s+charge\s+(?:any\s+)?fee)/i.test(text);
+      const inds = [];
+      const rules = [
+        ["Advance Fee / Registration Scam", "critical", /\b(?:pay\s+₹?\s*\d[\d,]*\s*(?:refundable\s+)?registration\s+fee|registration\s+fees?\s+jama\s+karo)\b|रजिस्ट्रेशन\s+फीस/i, "Demands upfront registration/processing fee."],
+        ["Security / Equipment Deposit Scam", "critical", /\b(?:security\s+deposit|laptop\s+deposit)\b|सिक्योरिटी\s+डिपॉजिट/i, "Requests security or equipment deposit before joining."],
+        ["Prepaid Task & Recharge Scam", "critical", /\b(?:prepaid\s+(?:merchant\s+)?task|recharge\s+wallet|liking\s+youtube\s+videos)\b/i, "Matches Telegram/WhatsApp prepaid task scam."],
+        ["Unrealistic WFH Earnings", "high", /\b(?:earn\s+₹?\s*(?:[2-9],\d{3}|[1-9]\d,\d{3}).*daily|ghar\s+baithe\s+roz\s+₹?\d{3,5})/i, "Promises unrealistic daily WFH earnings."],
+        ["Guaranteed Selection Without Interview", "high", /\b(?:selected\s+without\s+interview|bina\s+interview)\b|बिना\s+इंटरव्यू/i, "Promises job selection with no interview."],
+        ["OTP / UPI PIN / Remote Access", "critical", /\b(?:share\s+.*(?:otp|upi\s+pin)|install\s+(?:anydesk|teamviewer))\b/i, "Requests OTP, UPI PIN, or remote-access software."],
+      ];
+      for (const [cat, sev, rx, exp] of rules) {
+        const m = text.match(rx);
+        if (m) {
+          const pref = text.slice(Math.max(0, m.index - 45), m.index).toLowerCase();
+          if (/(never|do\s+not|does\s+not|no\s+)/.test(pref)) continue;
+          inds.push({ id: "r" + inds.length, category: cat, matched_text: m[0], severity: sev, explanation: exp, detection_method: "deterministic_rule_engine", reason_it_matters: exp, suggested_action: "Stop and verify employer independently." });
+        }
+      }
+      const urls = (text.match(/https?:\/\/[^\s<>"]+/gi) || []);
+      if (ext.job_url.value && !urls.includes(ext.job_url.value)) urls.unshift(ext.job_url.value);
+      const uRes = urls.map(localInspectUrl);
+      uRes.forEach((u) => {
+        if (u.risk_level !== "LOW RISK") {
+          inds.push({ id: "u" + inds.length, category: u.impersonated_brand ? "Fake Career Portal" : "Suspicious URL", matched_text: u.submitted_url, severity: u.impersonated_brand ? "critical" : "high", explanation: u.summary, detection_method: "zero_visit_url_inspector", reason_it_matters: "Lookalike career portals impersonate real employers.", suggested_action: u.recommended_actions[0] });
+        }
+      });
+      const empVal = ext.employer.value;
+      let regEntry = null;
+      if (empVal) {
+        for (const [k, info] of Object.entries(PROTECTED_EMPLOYERS)) {
+          if (empVal.toLowerCase().includes(k)) { regEntry = info; break; }
+        }
+      }
+      const email = ext.recruiter_email.value;
+      const eDom = email ? email.split("@").pop().toLowerCase() : null;
+      let emailStatus = "Unverified", emailExp = "No recruiter email supplied.";
+      if (eDom) {
+        if (regEntry && regEntry.domains.includes(eDom)) { emailStatus = "Confirmed by Source"; emailExp = `Email '@${eDom}' matches ${regEntry.canonical}'s official domain.`; }
+        else if (regEntry && PERSONAL_DOMAINS.has(eDom)) { emailStatus = "Suspicious Signal"; emailExp = `Personal email '@${eDom}' used for corporate employer '${regEntry.canonical}'.`; inds.push({ id: "em", category: "Personal Email for Corporate Role", matched_text: email, severity: "medium", explanation: emailExp, detection_method: "email_domain_alignment", reason_it_matters: "Major companies rarely send official offers from Gmail/Yahoo.", suggested_action: "Request official corporate email confirmation." }); }
+        else if (regEntry) { emailStatus = "Inconsistent"; emailExp = `Email domain '@${eDom}' does not match ${regEntry.canonical}.`; }
+        else { emailExp = `Custom domain '@${eDom}' is not in the local reference registry.`; }
+      }
+      const conflicts = [];
+      if (secondaryText && secondaryText.trim()) {
+        const s2 = localExtract(secondaryText, "");
+        ["employer", "role", "salary", "location"].forEach((f) => {
+          if (ext[f].value && s2[f].value && ext[f].value.toLowerCase() !== s2[f].value.toLowerCase()) conflicts.push(`${f}: '${ext[f].value}' vs '${s2[f].value}'`);
+        });
+      }
+      const categories = [
+        { category_number: 1, category_id: "employer_identity", category_name: "Employer Identity", overall_status: regEntry ? "Confirmed by Source" : "Unverified", summary: regEntry ? `Matched ${regEntry.canonical} (${regEntry.portal}).` : (empVal ? `Employer '${empVal}' is not in local registry (Unverified, not automatically fraudulent).` : "No employer identified."), records: [{ check_name: "Curated Employer Reference Registry", source_examined: "Local Registry", source_type: "curated_registry", observed_result: regEntry ? `Official domains: ${regEntry.domains.join(", ")}` : "Not in local registry", supporting_quotation: ext.employer.supporting_snippet, status: regEntry ? "Confirmed by Source" : "Unverified", timestamp: ts, explanation: "Unknown companies are never automatically marked fraudulent.", residual_uncertainty: "Confirm live corporate registration independently." }] },
+        { category_number: 2, category_id: "vacancy_verification", category_name: "Vacancy and Requisition Verification", overall_status: "Check Unavailable", summary: "Live Greenhouse/Lever ATS check requires optional external provider.", records: [{ check_name: "Public ATS Check (Greenhouse / Lever)", source_examined: "Allowlisted ATS APIs", source_type: "external_verification", observed_result: "External ATS provider disabled in local mode.", supporting_quotation: ext.requisition_id.supporting_snippet, status: "Check Unavailable", timestamp: ts, explanation: "Unavailable providers are honestly reported as Check Unavailable.", residual_uncertainty: "Search this role directly on the company's official career portal." }] },
+        { category_number: 3, category_id: "recruiter_contact", category_name: "Recruiter Contact Verification", overall_status: /whatsapp|telegram/i.test(text) ? "Suspicious Signal" : "Unverified", summary: ext.phone.value ? `Contact number: ${ext.phone.value}` : "No phone extracted.", records: [{ check_name: "Recruiter Contact Channel", source_examined: "User text", source_type: "local_heuristic", observed_result: /whatsapp|telegram/i.test(text) ? "Uses WhatsApp/Telegram recruitment channel." : "No messaging-only funnel detected.", supporting_quotation: ext.phone.supporting_snippet, status: /whatsapp|telegram/i.test(text) ? "Suspicious Signal" : "Unverified", timestamp: ts, explanation: "Verify recruiter identity via official corporate channels.", residual_uncertainty: "Phone numbers cannot be verified locally." }] },
+        { category_number: 4, category_id: "email_domain_alignment", category_name: "Email and Domain Alignment", overall_status: emailStatus, summary: emailExp, records: [{ check_name: "Recruiter Email vs. Employer Domain", source_examined: email || "None", source_type: "local_heuristic", observed_result: emailExp, supporting_quotation: ext.recruiter_email.supporting_snippet, status: emailStatus, timestamp: ts, explanation: emailExp, residual_uncertainty: "Pasted text cannot verify SPF/DKIM email headers." }] },
+        { category_number: 5, category_id: "link_domain_safety", category_name: "Link and Domain Safety", overall_status: uRes.some((u) => u.risk_level !== "LOW RISK") ? "Suspicious Signal" : "Unverified", summary: uRes[0] ? uRes[0].summary : "No URLs found.", records: [{ check_name: "Zero-Visit Structural URL Inspection", source_examined: uRes[0] ? uRes[0].submitted_url : "None", source_type: "local_heuristic", observed_result: uRes[0] ? uRes[0].summary : "No URLs present.", supporting_quotation: uRes[0] ? uRes[0].submitted_url : null, status: uRes.some((u) => u.risk_level !== "LOW RISK") ? "Suspicious Signal" : "Unverified", timestamp: ts, explanation: "URLs are never automatically opened.", residual_uncertainty: "External reputation blocklists require API configuration." }] },
+        { category_number: 6, category_id: "payment_sensitive_info", category_name: "Payment and Sensitive Information Requests", overall_status: inds.some((i) => i.severity === "critical") ? "Suspicious Signal" : (hasDisc ? "Confirmed by Source" : "Unverified"), summary: inds.some((i) => i.severity === "critical") ? "Payment, deposit, or sensitive credential demand detected." : (hasDisc ? "Protective anti-fraud disclaimer detected." : "No upfront payment or OTP/PIN request detected."), records: [{ check_name: "Payment & Sensitive Info Rules", source_examined: "User text", source_type: "local_heuristic", observed_result: hasDisc ? "Anti-fraud disclaimer recognized (not a scam trigger)." : "Checked for fees, deposits, OTP/PIN, and AnyDesk.", supporting_quotation: ext.payment_requests.supporting_snippet, status: inds.some((i) => i.severity === "critical") ? "Suspicious Signal" : (hasDisc ? "Confirmed by Source" : "Unverified"), timestamp: ts, explanation: "Legitimate hiring never demands upfront fees or OTP/UPI PINs.", residual_uncertainty: "Stay alert in follow-up messages." }] },
+        { category_number: 7, category_id: "document_consistency", category_name: "Document and Message Consistency", overall_status: conflicts.length ? "Inconsistent" : (secondaryText ? "Confirmed by Source" : "Unverified"), summary: conflicts.length ? `Contradictions: ${conflicts.join("; ")}` : (secondaryText ? "No contradictions detected across submitted texts." : "Single document submitted."), records: [{ check_name: "Cross-Document Consistency", source_examined: secondaryText ? "Primary + Secondary" : "Primary Only", source_type: "local_heuristic", observed_result: conflicts.length ? conflicts.join("; ") : "No conflicts detected.", supporting_quotation: null, status: conflicts.length ? "Inconsistent" : (secondaryText ? "Confirmed by Source" : "Unverified"), timestamp: ts, explanation: "Compares employer, role, salary, and location across materials.", residual_uncertainty: "Review full offer terms carefully." }] },
+      ];
+      const crit = inds.filter((i) => i.severity === "critical").length;
+      const hi = inds.filter((i) => i.severity === "high").length;
+      const med = inds.filter((i) => i.severity === "medium").length;
+      let sc = crit * 42 + hi * 30 + med * 18 + conflicts.length * 28;
+      if (hasDisc && crit === 0 && hi === 0) sc = Math.min(sc, 12);
+      const missCore = ["employer", "role", "recruiter_email", "job_url"].filter((k) => ext[k].status === "missing").length;
+      if (sc === 0 && missCore >= 3) sc = 26;
+      const riskIndex = Math.max(4, Math.min(98, sc));
+      const riskLevel = riskIndex >= 60 || crit >= 1 || hi >= 2 ? "HIGH RISK" : (riskIndex >= 25 || hi >= 1 || med >= 1 || conflicts.length ? "MEDIUM RISK" : "LOW RISK");
+      const allRecs = categories.flatMap((c) => c.records);
+      const confirmed = allRecs.filter((r) => r.status === "Confirmed by Source").length;
+      const unverified = allRecs.filter((r) => r.status === "Unverified").length;
+      const unavailable = allRecs.filter((r) => r.status === "Check Unavailable").length;
+      const inconsistent = allRecs.filter((r) => r.status === "Inconsistent").length;
+      const suspicious = allRecs.filter((r) => r.status === "Suspicious Signal").length;
+      return {
+        report_id: "jg-" + Date.now().toString(36),
+        timestamp: ts,
+        is_demo: Boolean(isDemo),
+        detected_language: ext.detected_language,
+        interface_language: STATE.settings.lang,
+        risk_index: riskIndex,
+        risk_level: riskLevel,
+        risk_headline: riskLevel === "HIGH RISK" ? "Multiple serious fraud indicators or contradictory evidence found." : riskLevel === "MEDIUM RISK" ? "Concerning signals or important unverified details require caution." : "No strong fraud signals detected — still verify unconfirmed details.",
+        risk_index_disclaimer: "Heuristic Risk Index (0–100) reflects explainable evidence signals—not a calibrated probability of fraud. Absence of indicators is not proof of legitimacy.",
+        evidence_coverage_percent: Math.round(((confirmed + inconsistent + suspicious) / allRecs.length) * 100),
+        verification_confidence: "Partial (Local Verification Engine)",
+        suspicious_indicator_count: inds.length,
+        confirmed_check_count: confirmed,
+        unverified_check_count: unverified,
+        unavailable_check_count: unavailable,
+        inconsistent_check_count: inconsistent,
+        extracted_data: ext,
+        indicators: inds,
+        url_inspections: uRes,
+        categories,
+        recommended_actions: riskLevel === "HIGH RISK" ? ["Do not pay any registration fee, security deposit, or task recharge.", "Do not open unverified career links or install AnyDesk/TeamViewer.", "In India, call 1930 immediately if money was transferred and report on cybercrime.gov.in."] : ["Verify the opening on the employer's official career portal.", "Never share OTPs, UPI PINs, or upfront fees at any stage."],
+        recommended_actions_hi: ["किसी भी रजिस्ट्रेशन फीस या सिक्योरिटी डिपॉजिट का भुगतान न करें।", "वित्तीय धोखाधड़ी होने पर 1930 पर कॉल करें या cybercrime.gov.in पर रिपोर्ट करें।"],
+        what_was_verified: categories.filter((c) => c.overall_status === "Confirmed by Source").map((c) => `${c.category_name}: ${c.summary}`),
+        what_could_not_be_verified: categories.filter((c) => ["Unverified", "Check Unavailable"].includes(c.overall_status)).map((c) => `${c.category_name}: ${c.summary}`),
+        ml_assessment: { available: false, model_type: "Server TF-IDF + Logistic Regression", predicted_label: "Connect FastAPI backend for ML signal", scam_probability_estimate: 0.5, top_contributing_terms: [], dataset_disclosure: "Secondary ML layer runs on FastAPI backend." },
+        ai_explanation: { provider: "local_evidence_explainer", used_external_llm: false, summary: `${riskLevel} (${riskIndex}/100): ${inds.length} indicator(s) across 7 categories.`, plain_language_advice: ["Verify employer & vacancy independently."], uncertainty_note: "External providers are disabled locally." },
+        redacted_input_preview: redacted.slice(0, 1500),
+        redaction_counts: counts,
+      };
+    }
+
+    // =========================================================================
+    // 4. CONTROLLERS
+    // =========================================================================
+    function nav(path) {
+      STATE.route = path;
+      window.location.hash = "#" + path;
+      render();
+      window.scrollTo({ top: 0, behavior: STATE.settings.reducedMotion ? "auto" : "smooth" });
+    }
+    function toggleLang() { STATE.settings.lang = STATE.settings.lang === "en" ? "hi" : "en"; saveSettings(); applyTheme(); render(); }
+    function toggleTheme() { STATE.settings.theme = STATE.settings.theme === "dark" ? "light" : "dark"; saveSettings(); applyTheme(); render(); }
+    function toggleSetting(k) { STATE.settings[k] = !STATE.settings[k]; saveSettings(); applyTheme(); render(); }
+    function resetAllData() {
+      STATE.history = []; STATE.currentReport = null; STATE.extractedDraft = null; STATE.inputText = ""; STATE.secondaryText = ""; STATE.inputUrl = ""; STATE.step = 1; STATE.quizBest = 0;
+      localStorage.removeItem(STORE.HISTORY); localStorage.removeItem(STORE.QUIZ);
+      toast("Cleared all local data.");
+      nav("/verify");
+    }
+
+    function loadDemo(id, jumpToExtract) {
+      const d = DEMO_SCENARIOS.find((x) => x.id === id);
+      if (!d) return;
+      STATE.inputText = d.text;
+      STATE.secondaryText = d.secondaryText || "";
+      STATE.showCompareBox = Boolean(d.secondaryText);
+      STATE.inputUrl = d.jobUrl || "";
+      STATE.isDemoInput = true;
+      STATE.inputMode = "paste";
+      STATE.step = 1;
+      STATE.extractedDraft = null;
+      toast("Loaded synthetic demo: " + d.short);
+      nav("/verify");
+      if (jumpToExtract) runExtractionStep();
+    }
+
+    async function runExtractionStep() {
+      const ta = document.getElementById("jg-paste-box");
+      if (ta) STATE.inputText = ta.value;
+      const sa = document.getElementById("jg-compare-box");
+      if (sa) STATE.secondaryText = sa.value;
+      const ua = document.getElementById("jg-url-box");
+      if (ua) STATE.inputUrl = ua.value;
+      if (!STATE.inputText.trim() && !STATE.inputUrl.trim()) {
+        return toast("Paste job details or enter a URL first.", "warn");
+      }
+      STATE.isLoading = true; render();
+      try {
+        if (STATE.backendAvailable) {
+          const r = await fetch("/api/extract", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text: STATE.inputText, job_url: STATE.inputUrl || null }) });
+          STATE.extractedDraft = r.ok ? await r.json() : localExtract(STATE.inputText, STATE.inputUrl);
+        } else {
+          STATE.extractedDraft = localExtract(STATE.inputText, STATE.inputUrl);
+        }
+      } catch {
+        STATE.extractedDraft = localExtract(STATE.inputText, STATE.inputUrl);
+      }
+      STATE.fieldEdits = {};
+      STATE.step = 2;
+      STATE.isLoading = false;
+      render();
+    }
+
+    async function runFullVerification() {
+      STATE.isLoading = true; render();
+      let rep = null;
+      try {
+        if (STATE.backendAvailable) {
+          const r = await fetch("/api/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              text: STATE.inputText, secondary_text: STATE.secondaryText || null, job_url: STATE.inputUrl || null,
+              edited_fields: STATE.fieldEdits, interface_language: STATE.settings.lang, is_demo: STATE.isDemoInput,
+              redact_sensitive: STATE.settings.redactSensitive,
+            }),
+          });
+          if (r.ok) rep = await r.json();
+        }
+      } catch {}
+      if (!rep) rep = localVerify(STATE.inputText, STATE.secondaryText, STATE.inputUrl, STATE.fieldEdits, STATE.isDemoInput);
+      STATE.currentReport = rep;
+      STATE.expandedCats = {};
+      rep.categories.forEach((c) => {
+        if (c.overall_status === "Suspicious Signal" || c.overall_status === "Inconsistent") STATE.expandedCats[c.category_id] = true;
+      });
+      if (STATE.settings.saveHistory) {
+        STATE.history = [rep, ...STATE.history.filter((h) => h.report_id !== rep.report_id)].slice(0, 100);
+        saveHistory();
+      }
+      STATE.step = 3;
+      STATE.isLoading = false;
+      render();
+    }
+
+    async function quickInspectUrl(custom) {
+      const el = document.getElementById("jg-url-only-input");
+      const u = custom || (el ? el.value : STATE.inputUrl);
+      if (!u || !u.trim()) return toast("Enter a recruitment URL to inspect.", "warn");
+      STATE.inputUrl = u.trim();
+      try {
+        if (STATE.backendAvailable) {
+          const r = await fetch("/api/inspect-url", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url: STATE.inputUrl }) });
+          if (r.ok) { STATE.urlResult = await r.json(); render(); return; }
+        }
+      } catch {}
+      STATE.urlResult = localInspectUrl(STATE.inputUrl);
+      render();
+    }
+
+    // OCR & Docs
+    function handleScreenshotUpload(ev) {
+      const f = ev.target.files && ev.target.files[0];
+      if (!f) return;
+      if (!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(f.type)) return toast("Use JPG, PNG, or WebP.", "error");
+      const r = new FileReader();
+      r.onload = (e) => { STATE.ocrImageUrl = e.target.result; STATE.ocrFileName = f.name; STATE.ocrProgress = 0; STATE.ocrStatus = "Image ready locally. Click Extract Text (OCR)."; render(); };
+      r.readAsDataURL(f);
+    }
+
+    function generateSampleJobScreenshot() {
+      const c = document.createElement("canvas"); c.width = 760; c.height = 320;
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, 760, 320);
+      ctx.fillStyle = "#4F46E5"; ctx.fillRect(0, 0, 760, 48);
+      ctx.fillStyle = "#FFFFFF"; ctx.font = "bold 17px Arial"; ctx.fillText("WHATSAPP RECRUITER SCREENSHOT (SYNTHETIC DEMO)", 20, 30);
+      ctx.fillStyle = "#14131B"; ctx.font = "bold 20px Arial";
+      ["Company: Infosys Hiring Desk", "Role: Junior Software Associate (WFH)", "Selected without interview! Salary: Rs 48,000/month", "Pay Rs 999 refundable registration fee today at:", "https://infosys.careers-verification.xyz/apply"].forEach((line, i) => ctx.fillText(line, 24, 92 + i * 42));
+      STATE.ocrImageUrl = c.toDataURL("image/png");
+      STATE.ocrFileName = "demo-job-scam-screenshot.png";
+      STATE.ocrStatus = "Sample screenshot generated locally. Click Extract Text (OCR).";
+      STATE.ocrProgress = 0; render();
+    }
+
+    function rotateOcrImg() {
+      if (!STATE.ocrImageUrl) return;
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas"); c.width = img.height; c.height = img.width;
+        const ctx = c.getContext("2d"); ctx.translate(c.width / 2, c.height / 2); ctx.rotate(Math.PI / 2); ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        STATE.ocrImageUrl = c.toDataURL("image/png"); render();
+      };
+      img.src = STATE.ocrImageUrl;
+    }
+
+    function enhanceOcrContrast() {
+      if (!STATE.ocrImageUrl) return;
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement("canvas"); c.width = img.width; c.height = img.height;
+        const ctx = c.getContext("2d"); ctx.drawImage(img, 0, 0);
+        const id = ctx.getImageData(0, 0, c.width, c.height); const d = id.data;
+        for (let i = 0; i < d.length; i += 4) { const l = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; const v = l > 145 ? 255 : Math.max(0, l * 0.45); d[i] = d[i + 1] = d[i + 2] = v; }
+        ctx.putImageData(id, 0, 0); STATE.ocrImageUrl = c.toDataURL("image/png"); STATE.ocrStatus = "High-contrast filter applied."; render();
+      };
+      img.src = STATE.ocrImageUrl;
+    }
+
+    async function runLocalOcr() {
+      if (!STATE.ocrImageUrl) return toast("Upload or generate a screenshot first.", "warn");
+      STATE.ocrProgress = 15; STATE.ocrStatus = "Running local browser OCR (Tesseract.js)..."; render();
+      try {
+        if (window.Tesseract && typeof window.Tesseract.recognize === "function") {
+          const res = await window.Tesseract.recognize(STATE.ocrImageUrl, "eng", {
+            logger: (m) => { if (m && typeof m.progress === "number") { STATE.ocrProgress = Math.max(15, Math.round(m.progress * 100)); const b = document.getElementById("ocr-bar"); if (b) b.style.width = STATE.ocrProgress + "%"; } }
+          });
+          if (res && res.data && res.data.text && res.data.text.trim().length > 3) {
+            STATE.inputText = res.data.text.trim(); STATE.ocrProgress = 100; STATE.ocrStatus = "Text extracted! Review below or continue to 10-field review."; render(); return;
+          }
+        }
+      } catch {}
+      STATE.ocrProgress = 100;
+      STATE.inputText = STATE.ocrFileName.startsWith("demo-")
+        ? "Company: Infosys Hiring Desk\nRole: Junior Software Associate (WFH)\nSelected without interview! Salary: Rs 48,000/month\nPay Rs 999 refundable registration fee today at: https://infosys.careers-verification.xyz/apply"
+        : STATE.inputText;
+      STATE.ocrStatus = STATE.inputText ? "Extracted text from demo canvas. Ready for 10-field review." : "Offline OCR worker unavailable; paste visible text below.";
+      render();
+    }
+
+    async function handleDocumentUpload(ev) {
+      const f = ev.target.files && ev.target.files[0];
+      if (!f) return;
+      STATE.docWarnings = [];
+      if (STATE.backendAvailable) {
+        const fd = new FormData(); fd.append("file", f);
+        try {
+          const r = await fetch("/api/extract/document", { method: "POST", body: fd });
+          if (r.ok) {
+            const data = await r.json();
+            STATE.inputText = data.extracted_text;
+            STATE.docWarnings = data.warnings || [];
+            toast(`Parsed ${data.file_type.toUpperCase()} document.`);
+            render(); return;
+          } else {
+            const err = await r.json().catch(() => ({ detail: "Extraction failed." }));
+            STATE.docWarnings = [err.detail]; toast(err.detail, "error"); render(); return;
+          }
+        } catch {}
+      }
+      if (f.name.toLowerCase().endsWith(".txt")) {
+        STATE.inputText = await f.text();
+        toast("Loaded TXT document locally.");
+      } else {
+        STATE.docWarnings = ["PDF and DOCX binary parsing requires the FastAPI backend (uvicorn backend.main:app). TXT works directly in browser-only mode."];
+        toast("Start FastAPI backend for PDF/DOCX parsing.", "warn");
+      }
+      render();
+    }
+
+    function downloadBlob(content, filename, mime) {
+      const b = new Blob([content], { type: mime });
+      const u = URL.createObjectURL(b);
+      const a = document.createElement("a"); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(u);
+    }
+    function exportReportMd(rep) {
+      if (!rep) return;
+      const lines = [
+        "# JobGuard AI — Evidence-Based Verification Report",
+        `- **Report ID:** ${rep.report_id}`,
+        `- **Risk Level:** ${rep.risk_level} (${rep.risk_index}/100 heuristic index)`,
+        `- **Evidence Coverage:** ${rep.evidence_coverage_percent}%`,
+        "", "## 7-Category Evidence Breakdown",
+        ...rep.categories.map((c) => `### ${c.category_number}. ${c.category_name} [${c.overall_status}]\n${c.summary}`),
+        "", "## Detected Red Flags",
+        ...(rep.indicators.length ? rep.indicators.map((i) => `- **${i.category}** (${i.severity}): "${i.matched_text}" — ${i.explanation}`) : ["- None detected."]),
+      ];
+      downloadBlob(lines.join("\n"), `${rep.report_id}-jobguard-report.md`, "text/markdown");
+      toast("Exported Markdown report.");
+    }
+    function exportHistory(fmt) {
+      if (!STATE.history.length) return toast("No history to export.", "warn");
+      if (fmt === "json") downloadBlob(JSON.stringify(STATE.history, null, 2), "jobguard-history.json", "application/json");
+      else {
+        const hdr = ["report_id", "timestamp", "risk_level", "risk_index", "evidence_coverage_percent", "employer", "role"];
+        const rows = STATE.history.map((h) => [h.report_id, h.timestamp, h.risk_level, h.risk_index, h.evidence_coverage_percent, h.extracted_data.employer.value || "", h.extracted_data.role.value || ""].map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(","));
+        downloadBlob([hdr.join(","), ...rows].join("\n"), "jobguard-history.csv", "text/csv");
+      }
+      toast(`Exported history as ${fmt.toUpperCase()}.`);
+    }
+
+    // =========================================================================
+    // 5. VISUAL COMPONENTS (RADIAL RING, PILLS, NAVIGATION)
+    // =========================================================================
+    function renderNavBars() {
+      const items = [
+        ["/verify", "✨", t("navVerify")],
+        ["/dashboard", "📊", t("navDashboard")],
+        ["/history", "🗂️", t("navHistory")],
+        ["/learn", "🎓", t("navLearn")],
+        ["/help", "🚨", t("navHelp")],
+      ];
+      const dn = document.getElementById("desktop-nav");
+      if (dn) {
+        dn.innerHTML = items.map(([p, ic, lbl]) => {
+          const active = STATE.route === p || (p === "/verify" && STATE.route === "/report");
+          return `<button type="button" onclick="nav('${p}')" class="px-4 py-1.5 rounded-full text-xs font-semibold transition flex items-center gap-1.5 ${active ? "bg-indigo-600 text-white shadow-sm" : "text-[var(--ink-muted)] hover:text-[var(--ink)]"}"><span>${ic}</span><span>${esc(lbl)}</span></button>`;
+        }).join("");
+      }
+      const md = document.getElementById("mobile-dock");
+      if (md) {
+        md.innerHTML = items.map(([p, ic, lbl]) => {
+          const active = STATE.route === p;
+          return `<button type="button" onclick="nav('${p}')" class="flex flex-col items-center py-1.5 rounded-xl text-[10px] font-bold transition ${active ? "bg-indigo-600 text-white" : "text-[var(--ink-muted)]"}"><span class="text-sm">${ic}</span><span>${esc(lbl)}</span></button>`;
+        }).join("");
+      }
+    }
+
+    function statusChip(st) {
+      const m = {
+        "Confirmed by Source": "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800",
+        "Inconsistent": "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-950/60 dark:text-orange-300 dark:border-orange-800",
+        "Suspicious Signal": "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800",
+        "Unverified": "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800",
+        "Check Unavailable": "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700",
+      };
+      return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${m[st] || m["Unverified"]}">${esc(st)}</span>`;
+    }
+
+    function riskRing(score, level) {
+      const s = Math.max(0, Math.min(100, Number(score) || 0));
+      const color = level === "HIGH RISK" ? "#E11D48" : level === "MEDIUM RISK" ? "#D97706" : "#059669";
+      const r = 42, c = 2 * Math.PI * r, off = c - (s / 100) * c;
+      return `
+        <div class="relative w-28 h-28 flex items-center justify-center shrink-0">
+          <svg class="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="${r}" fill="none" stroke="currentColor" class="text-slate-200 dark:text-slate-800" stroke-width="9" />
+            <circle cx="50" cy="50" r="${r}" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" />
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span class="font-display font-bold text-2xl leading-none">${s}</span>
+            <span class="text-[9px] font-bold uppercase tracking-wider text-[var(--ink-muted)] mt-0.5">/ 100</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // 6. PAGES — CLEAN, WARM, EDITORIAL & EFFORTLESS UX
+    // =========================================================================
+    function viewLanding() {
+      return `
+        <section class="hero-aurora border-b border-[var(--line)]">
+          <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--surface)] border border-[var(--line)] text-xs font-semibold text-indigo-600 dark:text-indigo-300 shadow-sm">
+              <span>🛡️ ${esc(t("tagline"))}</span>
+            </div>
+            <h1 class="font-display text-4xl sm:text-6xl font-bold tracking-tight max-w-3xl mx-auto leading-[1.08]">
+              ${esc(t("heroTitle"))}
+            </h1>
+            <p class="text-base sm:text-lg text-[var(--ink-muted)] max-w-2xl mx-auto leading-relaxed">
+              ${esc(t("heroSub"))}
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 pt-2">
+              <button type="button" onclick="STATE.step=1; nav('/verify')" class="btn-indigo px-7 py-3.5 rounded-full font-bold text-sm">
+                ✨ ${esc(t("ctaVerify"))} →
+              </button>
+              <button type="button" onclick="loadDemo('demo-7', true)" class="px-6 py-3.5 rounded-full font-bold text-sm bg-[var(--surface)] border border-[var(--line)] hover:border-indigo-400 transition">
+                ⚡ ${esc(t("ctaDemo"))}
+              </button>
+            </div>
+
+            <!-- Interactive Quick-Start Input Strip right on Home -->
+            <div class="max-w-3xl mx-auto pt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
+              <button type="button" onclick="STATE.inputMode='paste'; STATE.step=1; nav('/verify')" class="card-ui card-hover p-4 space-y-1">
+                <div class="text-xl">📋</div>
+                <div class="font-bold text-xs">Paste Message</div>
+                <div class="text-[11px] text-[var(--ink-muted)]">WhatsApp, Email, Offer</div>
+              </button>
+              <button type="button" onclick="STATE.inputMode='url'; STATE.step=1; nav('/verify')" class="card-ui card-hover p-4 space-y-1">
+                <div class="text-xl">🔗</div>
+                <div class="font-bold text-xs">Inspect Job URL</div>
+                <div class="text-[11px] text-[var(--ink-muted)]">Zero-visit safety check</div>
+              </button>
+              <button type="button" onclick="STATE.inputMode='ocr'; STATE.step=1; nav('/verify')" class="card-ui card-hover p-4 space-y-1">
+                <div class="text-xl">📷</div>
+                <div class="font-bold text-xs">Screenshot OCR</div>
+                <div class="text-[11px] text-[var(--ink-muted)]">Private Tesseract.js</div>
+              </button>
+              <button type="button" onclick="STATE.inputMode='doc'; STATE.step=1; nav('/verify')" class="card-ui card-hover p-4 space-y-1">
+                <div class="text-xl">📄</div>
+                <div class="font-bold text-xs">Upload Offer File</div>
+                <div class="text-[11px] text-[var(--ink-muted)]">PDF, DOCX, or TXT</div>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="max-w-5xl mx-auto px-4 sm:px-6 py-14 space-y-8">
+          <div class="text-center space-y-2">
+            <h2 class="font-display text-2xl sm:text-3xl font-bold">How JobGuard AI Protects You</h2>
+            <p class="text-sm text-[var(--ink-muted)]">Three transparent steps—no black-box scores, no invented evidence.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="card-ui p-6 space-y-2.5">
+              <span class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-display font-bold text-sm flex items-center justify-center">1</span>
+              <h3 class="font-bold text-base">Review 10 Extracted Fields</h3>
+              <p class="text-xs text-[var(--ink-muted)] leading-relaxed">We pull Employer, Role, Salary, Email, Phone, Location, URL, Requisition ID, Payment Requests, and Deadlines—and let you fix anything before running verification.</p>
+            </div>
+            <div class="card-ui p-6 space-y-2.5">
+              <span class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-display font-bold text-sm flex items-center justify-center">2</span>
+              <h3 class="font-bold text-base">7-Category Evidence Report</h3>
+              <p class="text-xs text-[var(--ink-muted)] leading-relaxed">Every check is transparently tagged: Confirmed by Source, Inconsistent, Suspicious Signal, Unverified, or Check Unavailable. Unknown companies are never blindly called scams.</p>
+            </div>
+            <div class="card-ui p-6 space-y-2.5">
+              <span class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-display font-bold text-sm flex items-center justify-center">3</span>
+              <h3 class="font-bold text-base">Privacy-First & Offline Ready</h3>
+              <p class="text-xs text-[var(--ink-muted)] leading-relaxed">Automatically redacts Aadhaar, PAN, IFSC, bank numbers, and OTP/PINs. Never opens submitted URLs automatically. Works in English, Hindi, and Hinglish.</p>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function viewVerifyStudio() {
+      const steps = [
+        [1, "1. Submit Job Info"],
+        [2, "2. Review 10 Fields"],
+        [3, "3. Evidence Report"],
+      ];
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+          <!-- Clean 3-Step Progress Stepper -->
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="font-display text-2xl sm:text-3xl font-bold">Verification Studio</h1>
+              <p class="text-xs text-[var(--ink-muted)] mt-0.5">Submit text, a career URL, screenshot, or offer document for 7-category evidence verification.</p>
+            </div>
+            <div class="flex items-center gap-1.5 p-1 rounded-full bg-[var(--surface-muted)] border border-[var(--line)]">
+              ${steps.map(([num, lbl]) => {
+                const active = STATE.step === num;
+                const canClick = num === 1 || (num === 2 && STATE.extractedDraft) || (num === 3 && STATE.currentReport);
+                return `<button type="button" ${canClick ? `onclick="STATE.step=${num}; render();"` : "disabled"} class="px-3.5 py-1.5 rounded-full text-xs font-bold transition ${active ? "bg-indigo-600 text-white shadow-sm" : canClick ? "text-[var(--ink)] hover:bg-[var(--surface)]" : "text-[var(--ink-muted)] opacity-50 cursor-not-allowed"}">${lbl}</button>`;
+              }).join("")}
+            </div>
+          </div>
+
+          ${STATE.step === 1 ? renderStep1Submit() : STATE.step === 2 ? renderStep2Review() : renderStep3Report()}
+        </div>
+      `;
+    }
+
+    function renderStep1Submit() {
+      const modes = [
+        ["paste", "📋", "Paste Text / Offer"],
+        ["url", "🔗", "Check Career URL"],
+        ["ocr", "📷", "Screenshot OCR"],
+        ["doc", "📄", "Upload PDF / DOCX"],
+      ];
+      return `
+        <!-- 4 Friendly Input Mode Switchers -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          ${modes.map(([m, ic, lbl]) => `
+            <button type="button" onclick="STATE.inputMode='${m}'; render();" class="p-3.5 rounded-2xl border text-left transition flex items-center gap-2.5 ${STATE.inputMode === m ? "bg-indigo-600 text-white border-indigo-600 shadow-md" : "bg-[var(--surface)] border-[var(--line)] hover:border-indigo-400"}">
+              <span class="text-lg">${ic}</span>
+              <span class="text-xs font-bold">${lbl}</span>
+            </button>
+          `).join("")}
+        </div>
+
+        <div class="card-ui p-6 space-y-5">
+          ${STATE.inputMode === "paste" ? `
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <label class="text-sm font-bold">Paste job ad, WhatsApp/Telegram chat, email, or offer letter</label>
+                <span class="text-[11px] text-[var(--ink-muted)]">English • हिंदी • Hinglish</span>
+              </div>
+              <textarea id="jg-paste-box" rows="6" oninput="STATE.inputText=this.value; STATE.isDemoInput=false;" placeholder="Example: Company, role, salary, recruiter email, application link, or full WhatsApp message..." class="w-full rounded-2xl border border-[var(--line)] bg-[var(--canvas)] p-4 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">${esc(STATE.inputText)}</textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-bold mb-1 text-[var(--ink-muted)]">Optional Career Portal URL (Zero-Visit Check)</label>
+                <input id="jg-url-box" type="text" value="${esc(STATE.inputUrl)}" oninput="STATE.inputUrl=this.value" placeholder="https://infosys.careers-verification.xyz/apply" class="w-full rounded-xl border border-[var(--line)] bg-[var(--canvas)] px-3.5 py-2.5 text-xs font-mono" />
+              </div>
+              <div class="flex items-end">
+                <button type="button" onclick="STATE.showCompareBox=!STATE.showCompareBox; render();" class="w-full py-2.5 px-3.5 rounded-xl border border-dashed border-[var(--line)] hover:border-indigo-400 text-xs font-bold text-indigo-600 dark:text-indigo-300 transition">
+                  ${STATE.showCompareBox ? "− Hide Second Document Comparison" : "+ Compare Against an Offer Letter / Second Chat"}
+                </button>
+              </div>
+            </div>
+            ${STATE.showCompareBox ? `
+              <div class="space-y-1.5">
+                <label class="text-xs font-bold text-indigo-600 dark:text-indigo-300">Secondary Document (Checks for conflicting company, role, salary, or location)</label>
+                <textarea id="jg-compare-box" rows="3" oninput="STATE.secondaryText=this.value" placeholder="Paste offer letter or second recruiter message here..." class="w-full rounded-xl border border-indigo-300 dark:border-indigo-800 bg-[var(--canvas)] p-3 text-xs">${esc(STATE.secondaryText)}</textarea>
+              </div>
+            ` : ""}
+          ` : STATE.inputMode === "url" ? `
+            <div class="space-y-4">
+              <div>
+                <h2 class="font-bold text-base">Zero-Visit Career Portal & Domain Safety Inspector</h2>
+                <p class="text-xs text-[var(--ink-muted)] mt-0.5">We inspect the URL structure, registrable domain, Punycode, and brand impersonation without ever opening the link.</p>
+              </div>
+              <div class="flex flex-col sm:flex-row gap-2.5">
+                <input id="jg-url-only-input" type="text" value="${esc(STATE.inputUrl || "https://infosys.careers-verification.xyz/apply")}" oninput="STATE.inputUrl=this.value" placeholder="https://company.careers-example.xyz/apply" class="flex-1 rounded-xl border border-[var(--line)] bg-[var(--canvas)] px-4 py-3 text-xs font-mono" />
+                <button type="button" onclick="quickInspectUrl()" class="btn-indigo px-5 py-3 rounded-xl text-xs font-bold shrink-0">🔍 Inspect URL Now</button>
+              </div>
+              <div class="flex flex-wrap gap-2 text-[11px]">
+                <span class="text-[var(--ink-muted)] font-semibold py-1">Quick tests:</span>
+                <button type="button" onclick="quickInspectUrl('https://infosys.careers-verification.xyz/apply')" class="px-2.5 py-1 rounded-full bg-[var(--surface-muted)] hover:bg-indigo-100 dark:hover:bg-indigo-950 font-mono">infosys.careers-verification.xyz</button>
+                <button type="button" onclick="quickInspectUrl('http://192.168.1.44/tcs-offer')" class="px-2.5 py-1 rounded-full bg-[var(--surface-muted)] hover:bg-indigo-100 dark:hover:bg-indigo-950 font-mono">192.168.1.44/tcs-offer</button>
+                <button type="button" onclick="quickInspectUrl('https://www.infosys.com/careers/')" class="px-2.5 py-1 rounded-full bg-[var(--surface-muted)] hover:bg-emerald-100 dark:hover:bg-emerald-950 font-mono">infosys.com/careers (Official)</button>
+              </div>
+              ${STATE.urlResult ? `
+                <div class="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--line)] space-y-3">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold ${STATE.urlResult.risk_level === "HIGH RISK" ? "bg-rose-600 text-white" : STATE.urlResult.risk_level === "MEDIUM RISK" ? "bg-amber-500 text-white" : "bg-emerald-600 text-white"}">${esc(STATE.urlResult.risk_level)} • ${STATE.urlResult.risk_index}/100</span>
+                    <span class="text-xs font-mono">True Domain: <strong class="text-indigo-600 dark:text-indigo-300">${esc(STATE.urlResult.registrable_domain || "N/A")}</strong></span>
+                  </div>
+                  <div class="inert-url text-xs p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)]">${esc(STATE.urlResult.submitted_url)}</div>
+                  <p class="text-xs font-medium">${esc(STATE.urlResult.summary)}</p>
+                  <div class="space-y-1.5">${(STATE.urlResult.signals || []).map((s) => `<div class="text-xs p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--line)]"><strong>${esc(s.signal.replace(/_/g, " ").toUpperCase())}:</strong> ${esc(s.explanation)}</div>`).join("")}</div>
+                </div>
+              ` : ""}
+            </div>
+          ` : STATE.inputMode === "ocr" ? `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="space-y-3">
+                <label class="block border-2 border-dashed border-[var(--line)] hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer bg-[var(--canvas)] transition">
+                  <div class="text-2xl mb-1">📷</div>
+                  <div class="text-xs font-bold">Upload Screenshot (JPG, PNG, WebP)</div>
+                  <div class="text-[11px] text-[var(--ink-muted)] mt-0.5">Runs 100% locally in your browser via Tesseract.js</div>
+                  <input type="file" accept="image/jpeg,image/png,image/webp" onchange="handleScreenshotUpload(event)" class="hidden" />
+                </label>
+                <button type="button" onclick="generateSampleJobScreenshot()" class="w-full py-2 rounded-xl text-xs font-bold bg-[var(--surface-muted)] hover:bg-indigo-50 dark:hover:bg-indigo-950 transition">🎨 Generate Demo Job Scam Screenshot</button>
+                ${STATE.ocrImageUrl ? `
+                  <div class="flex gap-2">
+                    <button type="button" onclick="enhanceOcrContrast()" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-[var(--surface-muted)]">◐ Contrast</button>
+                    <button type="button" onclick="rotateOcrImg()" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-[var(--surface-muted)]">↻ Rotate 90°</button>
+                    <button type="button" onclick="runLocalOcr()" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white">⚡ Run OCR</button>
+                  </div>
+                  <img src="${STATE.ocrImageUrl}" class="max-h-48 mx-auto rounded-xl border border-[var(--line)]" alt="Preview" />
+                  <div class="w-full h-1.5 rounded-full bg-[var(--surface-muted)] overflow-hidden"><div id="ocr-bar" class="h-full bg-indigo-600" style="width:${STATE.ocrProgress}%"></div></div>
+                  <div class="text-[11px] text-[var(--ink-muted)]">${esc(STATE.ocrStatus)}</div>
+                ` : ""}
+              </div>
+              <div class="space-y-2">
+                <label class="text-xs font-bold">Editable Extracted Text</label>
+                <textarea id="jg-paste-box" rows="9" oninput="STATE.inputText=this.value" placeholder="OCR text appears here—edit any characters before continuing..." class="w-full rounded-xl border border-[var(--line)] bg-[var(--canvas)] p-3 text-xs font-mono">${esc(STATE.inputText)}</textarea>
+              </div>
+            </div>
+          ` : `
+            <div class="space-y-4">
+              <label class="block border-2 border-dashed border-[var(--line)] hover:border-indigo-500 rounded-2xl p-7 text-center cursor-pointer bg-[var(--canvas)] transition">
+                <div class="text-3xl mb-1">📄</div>
+                <div class="text-sm font-bold">Upload Offer Letter or Job Description (PDF, DOCX, TXT)</div>
+                <div class="text-xs text-[var(--ink-muted)] mt-1">Automatically extracts text and redacts Aadhaar, PAN, IFSC, and OTP/PINs</div>
+                <input type="file" accept=".pdf,.docx,.txt" onchange="handleDocumentUpload(event)" class="hidden" />
+              </label>
+              ${STATE.docWarnings.length ? `<div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-200 text-xs">${STATE.docWarnings.map(esc).join("<br/>")}</div>` : ""}
+              <textarea id="jg-paste-box" rows="5" oninput="STATE.inputText=this.value" placeholder="Extracted document text will appear here..." class="w-full rounded-xl border border-[var(--line)] bg-[var(--canvas)] p-3 text-xs font-mono">${esc(STATE.inputText)}</textarea>
+            </div>
+          `}
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--line)]">
+            <span class="text-[11px] text-[var(--ink-muted)]">🔒 Auto-redacts Aadhaar, PAN, IFSC, bank numbers & OTP/PINs.</span>
+            <button type="button" onclick="runExtractionStep()" class="btn-indigo px-6 py-3 rounded-full text-xs font-bold">
+              ${STATE.isLoading ? "Extracting..." : "Continue to Step 2: Review 10 Fields →"}
+            </button>
+          </div>
+        </div>
+
+        <!-- Friendly Horizontal Demo Chips -->
+        <div class="card-ui p-5 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">1-Click Synthetic Demo Scenarios (Not Live Verifications)</span>
+            <span class="text-[11px] text-[var(--ink-muted)]">10 Scenarios</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${DEMO_SCENARIOS.map((d) => `
+              <button type="button" onclick="loadDemo('${d.id}', false)" class="px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--surface-muted)] hover:bg-indigo-600 hover:text-white border border-[var(--line)] transition">
+                ${esc(d.short)} <span class="opacity-65 text-[10px]">(${esc(d.lang)})</span>
+              </button>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStep2Review() {
+      const ext = STATE.extractedDraft || localExtract(STATE.inputText, STATE.inputUrl);
+      const fields = [
+        ["employer", "Employer / Company"], ["role", "Job Title / Role"], ["salary", "Salary / Stipend"], ["recruiter_email", "Recruiter Email"],
+        ["phone", "Phone Number"], ["location", "Job Location"], ["job_url", "Job / Portal URL"], ["requisition_id", "Requisition / Job ID"],
+        ["payment_requests", "Payment Requests"], ["deadlines", "Deadlines"],
+      ];
+      return `
+        <div class="card-ui p-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="font-display text-xl font-bold">Review & Confirm 10 Extracted Fields</h2>
+              <p class="text-xs text-[var(--ink-muted)] mt-0.5">Correct any detail below. Missing fields stay explicitly marked as Missing and are never fabricated.</p>
+            </div>
+            <button type="button" onclick="STATE.step=1; render();" class="px-3.5 py-2 rounded-full text-xs font-bold bg-[var(--surface-muted)]">← Back to Input</button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            ${fields.map(([k, lbl], idx) => {
+              const f = ext[k] || { value: null, status: "missing", confidence: 0, supporting_snippet: null };
+              const val = STATE.fieldEdits[k] !== undefined ? STATE.fieldEdits[k] : (f.value || "");
+              return `
+                <div class="p-3.5 rounded-2xl bg-[var(--canvas)] border border-[var(--line)] space-y-2">
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold">${idx + 1}. ${lbl}</span>
+                    ${val ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">${Math.round((f.confidence || 1) * 100)}%</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">Missing</span>`}
+                  </div>
+                  <input type="text" value="${esc(val)}" oninput="STATE.fieldEdits['${k}']=this.value" placeholder="Explicitly missing — leave blank or type" class="w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2 text-xs font-mono" />
+                  ${f.supporting_snippet ? `<div class="text-[10px] text-[var(--ink-muted)] font-mono truncate">Quote: "${esc(f.supporting_snippet)}"</div>` : ""}
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="flex justify-end pt-2">
+            <button type="button" onclick="runFullVerification()" class="btn-indigo px-7 py-3 rounded-full text-sm font-bold">
+              ${STATE.isLoading ? "Verifying 7 Categories..." : "Run 7-Category Evidence Verification →"}
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStep3Report() {
+      const r = STATE.currentReport;
+      if (!r) return `<div class="card-ui p-8 text-center text-xs">No report generated yet.</div>`;
+      const tone = r.risk_level === "HIGH RISK" ? "border-rose-300 dark:border-rose-800 bg-rose-50/70 dark:bg-rose-950/30" : r.risk_level === "MEDIUM RISK" ? "border-amber-300 dark:border-amber-800 bg-amber-50/70 dark:bg-amber-950/30" : "border-emerald-300 dark:border-emerald-800 bg-emerald-50/70 dark:bg-emerald-950/30";
+      const badge = r.risk_level === "HIGH RISK" ? "bg-rose-600 text-white" : r.risk_level === "MEDIUM RISK" ? "bg-amber-500 text-white" : "bg-emerald-600 text-white";
+      return `
+        <!-- Verdict Banner with Radial Risk Ring -->
+        <div class="rounded-3xl p-6 border-2 ${tone} space-y-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+            <div class="space-y-2 flex-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-extrabold ${badge}">${esc(r.risk_level)}</span>
+                ${r.is_demo ? '<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-indigo-600 text-white">SYNTHETIC DEMO</span>' : ""}
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--surface)] border border-[var(--line)]">Coverage: ${r.evidence_coverage_percent}%</span>
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[var(--surface)] border border-[var(--line)]">Lang: ${esc(r.detected_language)}</span>
+              </div>
+              <h2 class="font-display text-xl sm:text-2xl font-bold">${esc(r.risk_headline)}</h2>
+              <p class="text-xs text-[var(--ink-muted)]">${esc(r.risk_index_disclaimer)}</p>
+            </div>
+            ${riskRing(r.risk_index, r.risk_level)}
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
+            <div class="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--line)]"><div class="text-[var(--ink-muted)]">Red Flags</div><div class="font-display text-xl font-bold text-rose-600">${r.suspicious_indicator_count}</div></div>
+            <div class="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--line)]"><div class="text-[var(--ink-muted)]">Confirmed</div><div class="font-display text-xl font-bold text-emerald-600">${r.confirmed_check_count}</div></div>
+            <div class="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--line)]"><div class="text-[var(--ink-muted)]">Unverified</div><div class="font-display text-xl font-bold text-amber-600">${r.unverified_check_count}</div></div>
+            <div class="p-3 rounded-2xl bg-[var(--surface)] border border-[var(--line)]"><div class="text-[var(--ink-muted)]">Unavailable</div><div class="font-display text-xl font-bold">${r.unavailable_check_count}</div></div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="STATE.step=1; render();" class="px-4 py-2 rounded-full text-xs font-bold bg-[var(--surface)] border border-[var(--line)]">+ Check Another Offer</button>
+            <button type="button" onclick="exportReportMd(STATE.currentReport)" class="px-4 py-2 rounded-full text-xs font-bold bg-[var(--surface)] border border-[var(--line)]">⬇ Export Markdown</button>
+            <button type="button" onclick="downloadBlob(JSON.stringify(STATE.currentReport,null,2), STATE.currentReport.report_id+'.json', 'application/json')" class="px-4 py-2 rounded-full text-xs font-bold bg-[var(--surface)] border border-[var(--line)]">⬇ Export JSON</button>
+          </div>
+        </div>
+
+        <!-- 7-Category Evidence Accordion -->
+        <div class="space-y-3">
+          <h3 class="font-display text-lg font-bold">7-Category Evidence Breakdown</h3>
+          ${r.categories.map((c) => {
+            const open = Boolean(STATE.expandedCats[c.category_id]);
+            return `
+              <div class="card-ui overflow-hidden">
+                <button type="button" onclick="STATE.expandedCats['${c.category_id}']=!STATE.expandedCats['${c.category_id}']; render();" class="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left hover:bg-[var(--surface-muted)]/50 transition">
+                  <div class="space-y-1">
+                    <div class="flex flex-wrap items-center gap-2"><span class="text-xs font-bold text-indigo-600 dark:text-indigo-300">0${c.category_number}</span>${statusChip(c.overall_status)}</div>
+                    <div class="font-bold text-sm sm:text-base">${esc(c.category_name)}</div>
+                    <div class="text-xs text-[var(--ink-muted)]">${esc(c.summary)}</div>
+                  </div>
+                  <span class="text-xs font-bold text-indigo-600 dark:text-indigo-300 shrink-0">${open ? "Close ▲" : "Inspect ▼"}</span>
+                </button>
+                ${open ? `
+                  <div class="px-5 pb-5 pt-2 border-t border-[var(--line)] space-y-2.5">
+                    ${c.records.map((rec) => `
+                      <div class="p-3.5 rounded-2xl bg-[var(--canvas)] border border-[var(--line)] text-xs space-y-1.5">
+                        <div class="flex flex-wrap justify-between items-center gap-2"><span class="font-bold">${esc(rec.check_name)}</span>${statusChip(rec.status)}</div>
+                        <div><strong>Source:</strong> ${esc(rec.source_examined)} <span class="text-[var(--ink-muted)]">(${esc(rec.source_type)})</span></div>
+                        <div><strong>Observed:</strong> ${esc(rec.observed_result)}</div>
+                        ${rec.supporting_quotation ? `<div class="p-2.5 rounded-xl bg-[var(--surface)] border-l-4 border-indigo-500 font-mono text-[11px] break-all">"${esc(rec.supporting_quotation)}"</div>` : ""}
+                        <div class="text-[var(--ink-muted)]">${esc(rec.explanation)}</div>
+                        <div class="text-[11px] text-amber-700 dark:text-amber-300"><strong>Residual Uncertainty:</strong> ${esc(rec.residual_uncertainty)}</div>
+                      </div>
+                    `).join("")}
+                  </div>
+                ` : ""}
+              </div>
+            `;
+          }).join("")}
+        </div>
+
+        ${r.indicators.length ? `
+          <div class="card-ui p-6 space-y-3">
+            <h3 class="font-display text-base font-bold">Detected Red Flags (${r.indicators.length})</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${r.indicators.map((i) => `
+                <div class="p-4 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs space-y-1.5">
+                  <div class="flex justify-between items-center"><span class="font-bold text-rose-700 dark:text-rose-300">${esc(i.category)}</span><span class="uppercase text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-600 text-white">${esc(i.severity)}</span></div>
+                  <div class="font-mono font-semibold">"${esc(i.matched_text)}"</div>
+                  <div>${esc(i.explanation)}</div>
+                  <div class="text-[var(--ink-muted)]"><strong>Next step:</strong> ${esc(i.suggested_action)}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : ""}
+
+        <!-- Recommended Actions & Transparency -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="card-ui p-5 space-y-2.5 text-xs">
+            <h3 class="font-display font-bold text-sm">Recommended Next Steps</h3>
+            ${(STATE.settings.lang === "hi" && r.recommended_actions_hi ? r.recommended_actions_hi : r.recommended_actions).map((a, idx) => `<div class="p-3 rounded-xl bg-[var(--canvas)] border border-[var(--line)]">${idx + 1}. ${esc(a)}</div>`).join("")}
+          </div>
+          <div class="card-ui p-5 space-y-2 text-xs">
+            <h3 class="font-display font-bold text-sm">Secondary ML & Grounded Explainer</h3>
+            <div><strong>Classifier:</strong> ${esc(r.ml_assessment.model_type)}</div>
+            <div><strong>Signal:</strong> ${esc(r.ml_assessment.predicted_label)} (${Math.round((r.ml_assessment.scam_probability_estimate || 0) * 100)}%)</div>
+            <div class="text-[11px] text-[var(--ink-muted)]">${esc(r.ml_assessment.dataset_disclosure)}</div>
+            <div class="pt-1"><strong>Summary:</strong> ${esc(r.ai_explanation.summary)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    let riskChart = null;
+    function viewDashboard() {
+      const tot = STATE.history.length;
+      const hi = STATE.history.filter((h) => h.risk_level === "HIGH RISK").length;
+      const med = STATE.history.filter((h) => h.risk_level === "MEDIUM RISK").length;
+      const lo = STATE.history.filter((h) => h.risk_level === "LOW RISK").length;
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="font-display text-2xl sm:text-3xl font-bold">Dashboard & Security Insights</h1>
+              <p class="text-xs text-[var(--ink-muted)]">Reflects only your real local verification records—never fabricated analytics.</p>
+            </div>
+            <button type="button" onclick="STATE.step=1; nav('/verify')" class="btn-indigo px-5 py-2.5 rounded-full text-xs font-bold">+ New Verification</button>
+          </div>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            <div class="card-ui p-5"><div class="text-xs text-[var(--ink-muted)]">Total Checked</div><div class="font-display text-3xl font-bold mt-1">${tot}</div></div>
+            <div class="card-ui p-5"><div class="text-xs text-rose-600">High Risk</div><div class="font-display text-3xl font-bold text-rose-600 mt-1">${hi}</div></div>
+            <div class="card-ui p-5"><div class="text-xs text-amber-600">Medium Risk</div><div class="font-display text-3xl font-bold text-amber-600 mt-1">${med}</div></div>
+            <div class="card-ui p-5"><div class="text-xs text-emerald-600">Low Risk</div><div class="font-display text-3xl font-bold text-emerald-600 mt-1">${lo}</div></div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div class="lg:col-span-5 card-ui p-6 space-y-3">
+              <h2 class="font-display font-bold text-sm">Risk Distribution</h2>
+              ${tot === 0 ? `<div class="py-12 text-center text-xs text-[var(--ink-muted)]">Run a verification to see live charts.</div>` : `<div class="relative h-56"><canvas id="jg-risk-chart"></canvas></div>`}
+            </div>
+            <div class="lg:col-span-7 card-ui p-6 space-y-3">
+              <div class="flex justify-between items-center"><h2 class="font-display font-bold text-sm">Recent Activity</h2><button type="button" onclick="nav('/history')" class="text-xs font-bold text-indigo-600 dark:text-indigo-300">All History →</button></div>
+              ${tot === 0 ? `<div class="py-10 text-center space-y-3"><p class="text-xs text-[var(--ink-muted)]">No verifications yet.</p><button type="button" onclick="loadDemo('demo-1', true)" class="btn-indigo px-4 py-2 rounded-full text-xs font-bold">Run Demo Verification</button></div>` : `
+                <div class="space-y-2">
+                  ${STATE.history.slice(0, 5).map((h) => `
+                    <div class="p-3.5 rounded-2xl bg-[var(--canvas)] border border-[var(--line)] flex items-center justify-between gap-3">
+                      <div class="min-w-0">
+                        <div class="text-xs font-bold truncate">${esc(h.extracted_data.employer.value || "Unidentified Employer")} — ${esc(h.extracted_data.role.value || "Role Unspecified")}</div>
+                        <div class="text-[11px] text-[var(--ink-muted)]">${esc(h.risk_level)} (${h.risk_index}/100) • ${h.evidence_coverage_percent}% coverage</div>
+                      </div>
+                      <button type="button" onclick="STATE.currentReport=STATE.history.find(x=>x.report_id==='${h.report_id}'); STATE.step=3; nav('/verify');" class="px-3 py-1.5 rounded-full text-xs font-bold bg-indigo-600 text-white shrink-0">Open</button>
+                    </div>
+                  `).join("")}
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initCharts() {
+      if (STATE.route !== "/dashboard" || !STATE.history.length || !window.Chart) return;
+      const cv = document.getElementById("jg-risk-chart");
+      if (!cv) return;
+      if (riskChart) riskChart.destroy();
+      const hi = STATE.history.filter((h) => h.risk_level === "HIGH RISK").length;
+      const med = STATE.history.filter((h) => h.risk_level === "MEDIUM RISK").length;
+      const lo = STATE.history.filter((h) => h.risk_level === "LOW RISK").length;
+      riskChart = new Chart(cv, {
+        type: "doughnut",
+        data: { labels: ["High Risk", "Medium Risk", "Low Risk"], datasets: [{ data: [hi, med, lo], backgroundColor: ["#E11D48", "#D97706", "#059669"], borderWidth: 0 }] },
+        options: { responsive: true, maintainAspectRatio: false, cutout: "68%", plugins: { legend: { position: "bottom" } } },
+      });
+    }
+
+    function viewHistory() {
+      const q = STATE.histSearch.toLowerCase().trim();
+      const list = STATE.history.filter((h) => {
+        if (STATE.histRisk !== "ALL" && h.risk_level !== STATE.histRisk) return false;
+        if (q && !(JSON.stringify(h.extracted_data) + h.risk_headline).toLowerCase().includes(q)) return false;
+        return true;
+      });
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div><h1 class="font-display text-2xl sm:text-3xl font-bold">Verification History</h1><p class="text-xs text-[var(--ink-muted)]">Stored privately in your browser.</p></div>
+            <div class="flex gap-2">
+              <button type="button" onclick="exportHistory('json')" class="px-3.5 py-2 rounded-full text-xs font-bold bg-[var(--surface)] border border-[var(--line)]">⬇ JSON</button>
+              <button type="button" onclick="exportHistory('csv')" class="px-3.5 py-2 rounded-full text-xs font-bold bg-[var(--surface)] border border-[var(--line)]">⬇ CSV</button>
+              <button type="button" onclick="STATE.history=[]; saveHistory(); render();" class="px-3.5 py-2 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-600">Clear All</button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2.5">
+            <input type="text" value="${esc(STATE.histSearch)}" oninput="STATE.histSearch=this.value; render();" placeholder="Search employer, role, or email..." class="flex-1 min-w-[200px] rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs" />
+            <select onchange="STATE.histRisk=this.value; render();" class="rounded-full border border-[var(--line)] bg-[var(--surface)] px-4 py-2.5 text-xs font-semibold">
+              <option value="ALL" ${STATE.histRisk === "ALL" ? "selected" : ""}>All Risk Levels</option>
+              <option value="HIGH RISK" ${STATE.histRisk === "HIGH RISK" ? "selected" : ""}>HIGH RISK</option>
+              <option value="MEDIUM RISK" ${STATE.histRisk === "MEDIUM RISK" ? "selected" : ""}>MEDIUM RISK</option>
+              <option value="LOW RISK" ${STATE.histRisk === "LOW RISK" ? "selected" : ""}>LOW RISK</option>
+            </select>
+          </div>
+          ${list.length === 0 ? `<div class="card-ui p-10 text-center text-xs text-[var(--ink-muted)]">No matching records.</div>` : `
+            <div class="space-y-2.5">
+              ${list.map((h) => `
+                <div class="card-ui p-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div class="text-xs font-bold">${esc(h.risk_level)} (${h.risk_index}/100) • ${esc(h.extracted_data.employer.value || "Unknown Employer")} — ${esc(h.extracted_data.role.value || "Role Unspecified")}</div>
+                    <div class="text-[11px] text-[var(--ink-muted)]">${esc(h.timestamp)} • Coverage ${h.evidence_coverage_percent}%</div>
+                  </div>
+                  <div class="flex gap-2">
+                    <button type="button" onclick="STATE.currentReport=STATE.history.find(x=>x.report_id==='${h.report_id}'); STATE.step=3; nav('/verify');" class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-indigo-600 text-white">View</button>
+                    <button type="button" onclick="exportReportMd(STATE.history.find(x=>x.report_id==='${h.report_id}'))" class="px-3 py-1.5 rounded-full text-xs font-bold bg-[var(--surface-muted)]">MD</button>
+                    <button type="button" onclick="STATE.history=STATE.history.filter(x=>x.report_id!=='${h.report_id}'); saveHistory(); render();" class="px-3 py-1.5 rounded-full text-xs font-bold text-rose-600 bg-rose-50 dark:bg-rose-950/40">Del</button>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function viewLearn() {
+      const q = QUIZ_QUESTIONS[STATE.quizIdx];
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div><h1 class="font-display text-2xl sm:text-3xl font-bold">Recruitment Scam Academy & Quiz</h1><p class="text-xs text-[var(--ink-muted)]">Learn 10 real recruitment fraud tactics and test your instincts.</p></div>
+            <div class="flex p-1 rounded-full bg-[var(--surface-muted)] border border-[var(--line)]">
+              <button type="button" onclick="STATE.learnTab='academy'; render();" class="px-4 py-1.5 rounded-full text-xs font-bold ${STATE.learnTab === "academy" ? "bg-indigo-600 text-white" : ""}">🎓 10 Modules</button>
+              <button type="button" onclick="STATE.learnTab='quiz'; render();" class="px-4 py-1.5 rounded-full text-xs font-bold ${STATE.learnTab === "quiz" ? "bg-indigo-600 text-white" : ""}">🧠 Fraud Quiz (${STATE.quizBest}/${QUIZ_QUESTIONS.length})</button>
+            </div>
+          </div>
+
+          ${STATE.learnTab === "academy" ? `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              ${ACADEMY_MODULES.map((m) => `
+                <div class="card-ui p-5 space-y-2.5 text-xs">
+                  <div class="flex justify-between items-center"><span class="px-2.5 py-0.5 rounded-full font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">Module ${m.n} • ${esc(m.cat)}</span></div>
+                  <h2 class="font-display text-base font-bold">${esc(m.title)}</h2>
+                  <p class="text-[var(--ink-muted)]">${esc(m.summary)}</p>
+                  <ul class="list-disc pl-4 text-rose-700 dark:text-rose-300 space-y-0.5">${m.redFlags.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+                  <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200"><strong>Safe Action:</strong> ${esc(m.safe)}</div>
+                </div>
+              `).join("")}
+            </div>
+          ` : STATE.quizDone ? `
+            <div class="card-ui p-10 text-center space-y-4">
+              <div class="text-4xl">🏆</div>
+              <h2 class="font-display text-2xl font-bold">You scored ${STATE.quizScore} / ${QUIZ_QUESTIONS.length}!</h2>
+              <button type="button" onclick="STATE.quizIdx=0; STATE.quizScore=0; STATE.quizDone=false; STATE.quizSubmitted=false; render();" class="btn-indigo px-6 py-2.5 rounded-full text-xs font-bold">Play Again</button>
+            </div>
+          ` : `
+            <div class="card-ui p-6 space-y-5 max-w-3xl mx-auto">
+              <div class="flex justify-between text-xs font-bold text-[var(--ink-muted)]"><span>Question ${STATE.quizIdx + 1} of ${QUIZ_QUESTIONS.length}</span><span>From: ${esc(q.sender)}</span></div>
+              <div class="p-4 rounded-2xl bg-[var(--canvas)] border border-[var(--line)] font-mono text-xs leading-relaxed">${esc(q.msg)}</div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button type="button" onclick="if(!STATE.quizSubmitted){STATE.quizChoice='scam'; STATE.quizSubmitted=true; if(q.ans==='scam') STATE.quizScore++; render();}" class="p-4 rounded-2xl border-2 text-left text-xs font-bold transition ${STATE.quizChoice === "scam" ? "border-rose-500 bg-rose-50/50 dark:bg-rose-950/30" : "border-[var(--line)] hover:border-indigo-400"}">🚨 Fraudulent Recruitment Scam</button>
+                <button type="button" onclick="if(!STATE.quizSubmitted){STATE.quizChoice='legitimate'; STATE.quizSubmitted=true; if(q.ans==='legitimate') STATE.quizScore++; render();}" class="p-4 rounded-2xl border-2 text-left text-xs font-bold transition ${STATE.quizChoice === "legitimate" ? "border-emerald-500 bg-emerald-50/50 dark:bg-emerald-950/30" : "border-[var(--line)] hover:border-indigo-400"}">✅ Legitimate Recruitment Message</button>
+              </div>
+              ${STATE.quizSubmitted ? `
+                <div class="p-4 rounded-2xl bg-[var(--surface-muted)] text-xs space-y-2.5">
+                  <div class="font-bold">${STATE.quizChoice === q.ans ? "✅ Correct!" : "❌ Not quite"}</div>
+                  <div>${esc(q.exp)}</div>
+                  <button type="button" onclick="if(STATE.quizIdx+1<QUIZ_QUESTIONS.length){STATE.quizIdx++; STATE.quizChoice=null; STATE.quizSubmitted=false;}else{STATE.quizDone=true; if(STATE.quizScore>STATE.quizBest){STATE.quizBest=STATE.quizScore; localStorage.setItem(STORE.QUIZ, String(STATE.quizBest));}} render();" class="btn-indigo px-5 py-2 rounded-full text-xs font-bold">${STATE.quizIdx + 1 < QUIZ_QUESTIONS.length ? "Next Question →" : "See Final Score →"}</button>
+                </div>
+              ` : ""}
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function viewHelp() {
+      return `
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+          <div><h1 class="font-display text-2xl sm:text-3xl font-bold">Report Recruitment Fraud & Emergency Help</h1><p class="text-xs text-[var(--ink-muted)]">Official India cybercrime channels—verified government resources only.</p></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="card-ui p-6 border-rose-300 dark:border-rose-800 space-y-2.5">
+              <span class="text-xs font-extrabold uppercase text-rose-600">Financial Cyber Fraud Helpline (India)</span>
+              <div class="font-display text-4xl font-bold">Dial 1930</div>
+              <p class="text-xs text-[var(--ink-muted)]">If you paid a fake recruiter via UPI, NEFT/IMPS, or card, call 1930 immediately to request a bank-level transaction freeze.</p>
+              <a href="tel:1930" class="inline-block px-5 py-2.5 rounded-full bg-rose-600 text-white text-xs font-bold">📞 Call 1930 Now</a>
+            </div>
+            <div class="card-ui p-6 space-y-2.5">
+              <span class="text-xs font-extrabold uppercase text-indigo-600 dark:text-indigo-300">National Cyber Crime Reporting Portal</span>
+              <div class="font-display text-2xl font-bold">cybercrime.gov.in</div>
+              <p class="text-xs text-[var(--ink-muted)]">Submit screenshots of the job ad, fake offer letter, recruiter phone/email, and 12-digit UTR numbers.</p>
+              <a href="https://cybercrime.gov.in/" target="_blank" rel="noopener noreferrer" class="inline-block btn-indigo px-5 py-2.5 rounded-full text-xs font-bold">🌐 Open cybercrime.gov.in ↗</a>
+            </div>
+          </div>
+          <div class="card-ui p-6 space-y-2.5 text-xs">
+            <h2 class="font-display font-bold text-sm">Golden-Hour Checklist</h2>
+            <ol class="list-decimal pl-5 space-y-1.5 text-[var(--ink-muted)]">
+              <li>Stop all transfers immediately and block the recruiter on WhatsApp, Telegram, and email.</li>
+              <li>If you installed AnyDesk or TeamViewer, disconnect from the internet and uninstall it at once.</li>
+              <li>Export your JobGuard AI Markdown/JSON report and save chat screenshots plus UTR transaction IDs.</li>
+              <li>Call 1930 and register a formal complaint at cybercrime.gov.in.</li>
+            </ol>
+          </div>
+        </div>
+      `;
+    }
+
+    function viewSettings() {
+      const s = STATE.settings;
+      return `
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
+          <div><h1 class="font-display text-2xl sm:text-3xl font-bold">Settings & Privacy</h1><p class="text-xs text-[var(--ink-muted)]">Control interface language, appearance, PII redaction, and local storage.</p></div>
+          <div class="card-ui p-6 divide-y divide-[var(--line)] text-xs">
+            <div class="py-3.5 flex justify-between items-center">
+              <div><div class="font-bold text-sm">Interface Language (English / हिंदी)</div><div class="text-[var(--ink-muted)]">Independent from detected message language.</div></div>
+              <button type="button" onclick="toggleLang()" class="px-4 py-2 rounded-full font-bold bg-indigo-600 text-white">${s.lang === "hi" ? "हिंदी Active" : "English Active"}</button>
+            </div>
+            <div class="py-3.5 flex justify-between items-center">
+              <div><div class="font-bold text-sm">Color Theme</div><div class="text-[var(--ink-muted)]">Warm Ivory Light or Obsidian Indigo Dark.</div></div>
+              <button type="button" onclick="toggleTheme()" class="px-4 py-2 rounded-full font-bold bg-[var(--surface-muted)]">${s.theme === "dark" ? "🌙 Dark" : "☀️ Light"}</button>
+            </div>
+            <div class="py-3.5 flex justify-between items-center">
+              <div><div class="font-bold text-sm">Reduced Motion</div><div class="text-[var(--ink-muted)]">Disable transitions and hover lift effects.</div></div>
+              <button type="button" onclick="toggleSetting('reducedMotion')" class="px-4 py-2 rounded-full font-bold ${s.reducedMotion ? "bg-indigo-600 text-white" : "bg-[var(--surface-muted)]"}">${s.reducedMotion ? "Enabled" : "Disabled"}</button>
+            </div>
+            <div class="py-3.5 flex justify-between items-center">
+              <div><div class="font-bold text-sm">Automatic Sensitive Data Redaction</div><div class="text-[var(--ink-muted)]">Masks Aadhaar, PAN, IFSC, bank numbers, and OTP/PIN codes.</div></div>
+              <button type="button" onclick="toggleSetting('redactSensitive')" class="px-4 py-2 rounded-full font-bold ${s.redactSensitive ? "bg-indigo-600 text-white" : "bg-[var(--surface-muted)]"}">${s.redactSensitive ? "Enabled" : "Disabled"}</button>
+            </div>
+            <div class="py-3.5 flex justify-between items-center">
+              <div><div class="font-bold text-sm">Save Local Verification History</div><div class="text-[var(--ink-muted)]">Opt-in browser persistence; zero account required.</div></div>
+              <button type="button" onclick="toggleSetting('saveHistory')" class="px-4 py-2 rounded-full font-bold ${s.saveHistory ? "bg-indigo-600 text-white" : "bg-[var(--surface-muted)]"}">${s.saveHistory ? "Enabled" : "Disabled"}</button>
+            </div>
+            <div class="pt-4 flex justify-end">
+              <button type="button" onclick="resetAllData()" class="px-4 py-2 rounded-full font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-600">Reset All Local Data</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      renderNavBars();
+      const root = document.getElementById("app-root");
+      if (!root) return;
+      const r = STATE.route;
+      if (r === "/" || r === "") root.innerHTML = viewLanding();
+      else if (r === "/verify" || r === "/report") root.innerHTML = viewVerifyStudio();
+      else if (r === "/dashboard") { root.innerHTML = viewDashboard(); setTimeout(initCharts, 40); }
+      else if (r === "/history") root.innerHTML = viewHistory();
+      else if (r === "/learn") root.innerHTML = viewLearn();
+      else if (r === "/help") root.innerHTML = viewHelp();
+      else if (r === "/settings") root.innerHTML = viewSettings();
+      else root.innerHTML = viewLanding();
+    }
+
+    window.addEventListener("hashchange", () => {
+      STATE.route = (window.location.hash || "#/").slice(1) || "/";
+      render();
+    });
+
+    loadState();
+    detectBackend();
+    STATE.route = (window.location.hash || "#/").slice(1) || "/";
+    render();
+  </script>
+</body>
+</html>
